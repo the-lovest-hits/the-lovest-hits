@@ -14,7 +14,9 @@
   },
   "private": true,
   "dependencies": {
+    "@nestjs/axios": "^0.0.8",
     "@nestjs/common": "^8.0.0",
+    "@nestjs/config": "^2.0.1",
     "@nestjs/core": "^8.0.0",
     "@nestjs/platform-express": "^8.0.0",
     "@nrwl/next": "14.1.9",
