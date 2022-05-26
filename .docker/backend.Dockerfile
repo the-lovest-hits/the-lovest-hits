@@ -1,10 +1,11 @@
 ARG IMAGE
-FROM ${IMAGE}
-RUN ls -al /app
-WORKDIR /runtime
+FROM ${IMAGE} as artifacts
 
-RUN cd /runtime
-RUN mv /app/node_modules ./node_modules
-RUN mv /app/dist/apps/backend/* .
+FROM node:alpine
+WORKDIR /app
+COPY --from=artifacts /app/dist/apps/backend/* .
+COPY --from=artifacts /app/package.json .
+COPY --from=artifacts /app/package-lock.json .
+RUN npm install --production
 
 CMD ["node", "main.js"]

@@ -1,9 +1,8 @@
 ARG IMAGE
-FROM ${IMAGE}
+FROM ${IMAGE} as artifacts
+
+FROM node:alpine
 WORKDIR /runtime
-
-RUN cd /runtime
-RUN mv /app/node_modules ./node_modules
-RUN mv /app/dist/apps/the-lovest-hits/* .
-
+COPY --from=artifacts /app/dist/apps/the-lovest-hits/* .
+RUN npm install --production
 CMD ["npm", "start"]
