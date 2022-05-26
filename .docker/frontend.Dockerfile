@@ -3,6 +3,6 @@ FROM ${IMAGE} as artifacts
 
 FROM node:alpine
 WORKDIR /runtime
-COPY --from=artifacts /app/dist/apps/the-lovest-hits/* .
+COPY --from=artifacts /app/dist/apps/the-lovest-hits/ .
 RUN npm install --production
 CMD ["npm", "start"]
