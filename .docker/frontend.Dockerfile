@@ -3,7 +3,7 @@ FROM ${IMAGE}
 WORKDIR /runtime
 
 RUN cd /runtime
-RUN cp /app/node_modules ./node_modules
-RUN cp /app/dist/apps/the-lovest-hits .
+RUN mv /app/node_modules ./node_modules
+RUN mv /app/dist/apps/the-lovest-hits/* .
 
 CMD ["npm", "start"]
