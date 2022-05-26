@@ -20,5 +20,8 @@ import { Config } from '../config/config.module';
   providers: [
     SpotifyService,
   ],
+  exports: [
+    SpotifyService,
+  ],
 })
 export class SpotifyModule {}
