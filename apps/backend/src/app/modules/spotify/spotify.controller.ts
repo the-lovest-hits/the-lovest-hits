@@ -20,7 +20,9 @@ export class SpotifyController {
     @Query() query: Record<string, string>,
   ) {
 
-    const url = req.url.split('/').filter(p => !!p && p !== prefix).join('/');
+    const urlParts = req.url.split('/').filter(p => !!p);
+    const index = urlParts.findIndex(p => p === prefix);
+    const url = urlParts.splice(index + 1).join('/');
 
     this.spotifyService.http.get(
       url,
