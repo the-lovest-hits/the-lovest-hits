@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Artist } from '../../entities/artist';
 import { Genre } from '../../entities/genre';
 import { ArtistsService } from './artists.service';
+import { BlockchainModule } from '../blockchain/blockchain.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { ArtistsService } from './artists.service';
       Artist,
       Genre,
     ]),
+    BlockchainModule,
   ],
   controllers: [
     ArtistsController,

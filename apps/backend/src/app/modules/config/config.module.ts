@@ -15,6 +15,13 @@ export type Config = {
     password: string;
     database: string;
   };
+  unique: {
+    wss: string;
+    seed: string;
+    collectionId: string;
+    address: string;
+    webGate?: string;
+  };
 };
 
 const loadConfig = (): Config => ({
@@ -30,7 +37,14 @@ const loadConfig = (): Config => ({
     username: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DB,
-  }
+  },
+  unique: {
+    wss: process.env.UNIQUE_WSS_ENDPOINT,
+    seed: process.env.UNIQUE_SEED,
+    collectionId: process.env.UNIQUE_COLLECTION_ID,
+    address: process.env.UNIQUE_ADDRESS,
+    webGate: process.env.UNIQUE_WEB_GATE,
+  },
 });
 
 export const GlobalConfigModule = ConfigModule.forRoot({

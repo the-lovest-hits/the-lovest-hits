@@ -2,6 +2,13 @@ version: "3"
 
 services:
 
+  unique-web-gate:
+    image: uniquenetwork/web:develop
+    env_file:
+      - .env
+    ports:
+      - 3001:3000
+
   postgre:
     image: postgres:14-alpine
     env_file:
