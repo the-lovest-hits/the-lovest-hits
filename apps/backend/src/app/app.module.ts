@@ -9,10 +9,12 @@ import { Genre } from './entities/genre';
 import { TracksModule } from './modules/tracks/tracks.module';
 import { Track } from './entities/track';
 import { Album } from './entities/album';
+import { BlockchainModule } from './modules/blockchain/blockchain.module';
 
 @Module({
   imports: [
     GlobalConfigModule,
+    BlockchainModule,
     SpotifyModule,
     TypeOrmModule.forRootAsync({
       useFactory: (configService: ConfigService<Config>) => ({

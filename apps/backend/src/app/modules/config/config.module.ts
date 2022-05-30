@@ -17,11 +17,14 @@ export type Config = {
   };
   unique: {
     wss: string;
-    seed: string;
-    collectionId: string;
-    address: string;
+    seed: string; // todo move to root
+    collectionId: string; // todo move to settings
     webGate?: string;
   };
+  kusama: {
+    wss: string;
+    webGate?: string;
+  },
 };
 
 const loadConfig = (): Config => ({
@@ -42,8 +45,11 @@ const loadConfig = (): Config => ({
     wss: process.env.UNIQUE_WSS_ENDPOINT,
     seed: process.env.UNIQUE_SEED,
     collectionId: process.env.UNIQUE_COLLECTION_ID,
-    address: process.env.UNIQUE_ADDRESS,
     webGate: process.env.UNIQUE_WEB_GATE,
+  },
+  kusama: {
+    wss: process.env.KUSAMA_WSS_ENDPOINT,
+    webGate: process.env.KUSAMA_WEB_GATE,
   },
 });
 

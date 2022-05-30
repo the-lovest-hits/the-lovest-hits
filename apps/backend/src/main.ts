@@ -9,6 +9,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import { ConfigService } from '@nestjs/config';
 import { Config } from './app/modules/config/config.module';
+import { BlockchainModule } from './app/modules/blockchain/blockchain.module';
+import { BlockchainService } from './app/modules/blockchain/blockchain.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,6 +20,10 @@ async function bootstrap() {
     globalPrefix = config.get('prefix');
     app.setGlobalPrefix(globalPrefix);
   }
+
+  const bc = app.select(BlockchainModule).get(BlockchainService);
+
+  // bc.createRootCollection().then(console.log);
 
   const port = config.get('port');
   await app.listen(port);

@@ -23,7 +23,8 @@ export class ArtistsController {
   async mint(
     @Param('id') id: string,
   ): Promise<any> {
-    return await this.blockchainService.mintArtistCollection(id);
+    // return await this.blockchainService.mintArtistCollection(id);
     // return await this.blockchainService.mintArtist(id);
+
   }
 }
