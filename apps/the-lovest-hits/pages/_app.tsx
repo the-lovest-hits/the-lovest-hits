@@ -1,18 +1,30 @@
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-import './styles.css';
 
-function CustomApp({ Component, pageProps }: AppProps) {
+import '../assets/styles/bootstrap-reboot.min.css';
+import '../assets/styles/bootstrap-grid.min.css';
+import './styles.scss';
+
+// TODO: разнести по ксс-модулям
+import '../components/Header/Header.scss';
+import '../components/Main/Main.scss';
+import '../components/Footer/Footer.scss';
+import '../components/Player/Player.scss';
+import '../components/Sidebar/Sidebar.scss';
+
+const LovelyHitsApp = ({ Component, pageProps }: AppProps) => {
   return (
     <>
       <Head>
-        <title>Welcome to the-lovest-hits!</title>
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        />
+        <title>The lovest hits - index page</title>
       </Head>
-      <main className="app">
-        <Component {...pageProps} />
-      </main>
+      <Component {...pageProps} />
     </>
   );
-}
+};
 
-export default CustomApp;
+export default LovelyHitsApp;
