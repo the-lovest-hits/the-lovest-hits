@@ -5,10 +5,7 @@ const Document = () => {
   return (
     <React.StrictMode>
       <Html>
-        <Head>
-          {/* eslint-disable-next-line @next/next/no-title-in-document-head */}
-          <title>The lovest hits - main page</title>
-        </Head>
+        <Head />
         <body>
           <Main />
           <NextScript />
