@@ -66,6 +66,7 @@ export class UniqueGatekeeper extends Gatekeeper {
                                         constOnChainSchema,
                                         limits,
                                         owner,
+                                        mintMode,
                                       }: {
                                         name: string;
                                         description: string;
@@ -75,7 +76,8 @@ export class UniqueGatekeeper extends Gatekeeper {
                                         },
                                         constOnChainSchema: NFTMeta<T>;
                                         limits: CreateCollectionArguments['limits'];
-                                        owner: string;
+                                        owner?: string;
+                                        mintMode?: boolean;
                                       },
   ): CreateCollectionArguments {
     return {
@@ -127,7 +129,7 @@ export class UniqueGatekeeper extends Gatekeeper {
       mode: CollectionMode.Nft,
       transfersEnabled: true,
       metaUpdatePermission: MetaUpdatePermission.Admin, // token updates
-      mintMode: false, // set true if allowList can mint
+      mintMode: mintMode === undefined ? false : mintMode, // set true if allowList can mint
     }
   }
 

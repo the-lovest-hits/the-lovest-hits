@@ -5,7 +5,9 @@ const Document = () => {
   return (
     <React.StrictMode>
       <Html>
-        <Head />
+        <Head>
+          <link rel="stylesheet" href="/assets/styles/main.css" />
+        </Head>
         <body>
           <Main />
           <NextScript />

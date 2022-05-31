@@ -30,7 +30,9 @@ export class Artist {
   })
   name: string;
 
-  @ManyToMany(() => Genre)
+  @ManyToMany(() => Genre, {
+    eager: true,
+  })
   @JoinTable({
     name: 'artists_genres',
   })

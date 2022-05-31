@@ -15,6 +15,11 @@ export type Config = {
     password: string;
     database: string;
   };
+  market: {
+    priceMultiplier: number;
+    commission: number;
+    collectionDescPostfix: string;
+  };
   unique: {
     wss: string;
     seed: string; // todo move to root
@@ -51,6 +56,11 @@ const loadConfig = (): Config => ({
     wss: process.env.KUSAMA_WSS_ENDPOINT,
     webGate: process.env.KUSAMA_WEB_GATE,
   },
+  market: {
+    priceMultiplier: process.env.MARKET_PRICE_MULTIPLIER ? +process.env.MARKET_PRICE_MULTIPLIER : 0.0001,
+    commission: process.env.MARKET_COMMISSION ? +process.env.MARKET_COMMISSION : 10,
+    collectionDescPostfix: process.env.MARKET_COLLECTION_DESC_POSTFIX,
+  }
 });
 
 export const GlobalConfigModule = ConfigModule.forRoot({

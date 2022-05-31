@@ -4,14 +4,12 @@ import { Player } from '../Player';
 import { Main } from '../Main';
 import { Footer } from '../Footer';
 
-export const Layout = () => {
+export const Layout = ({children}) => {
   return (
-    <>
-      <Header />
-      <Sidebar />
-      <Player />
-      <Main />
-      <Footer />
-    </>
+    <main className="main">
+      <div className="container-fluid">
+        {children}
+      </div>
+    </main>
   );
 };

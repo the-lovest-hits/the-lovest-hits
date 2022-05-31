@@ -7,7 +7,7 @@ export const Footer: FC = () => {
         <div className="row">
           <div className="col-12 col-sm-8 col-md-6 col-lg-6 col-xl-4 order-4 order-md-1 order-lg-4 order-xl-1">
             <div className="footer__logo">
-              <img src="assets/img/logo.svg" alt="" />
+              <img src="/assets/img/logo.svg" alt="" />
             </div>
             <p className="footer__tagline">
               Record Label & Internet Radio,

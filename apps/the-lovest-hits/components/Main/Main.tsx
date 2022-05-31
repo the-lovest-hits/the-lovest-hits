@@ -2,8 +2,7 @@ import { FC } from 'react';
 
 export const Main: FC = () => {
   return (
-    <main className="main">
-      <div className="container-fluid">
+    <>
         {/*TODO: paste <Outlet> here*/}
 
         {/*slider*/}
@@ -1035,11 +1034,11 @@ export const Main: FC = () => {
                       data-link
                       data-title="Got What I Got"
                       data-artist="Jason Aldean"
-                      data-img="img/covers/cover.svg"
+                      data-img="/img/covers/cover.svg"
                       href="https://dmitryvolkov.me/demo/blast2.0/audio/12071151_epic-cinematic-trailer_by_audiopizza_preview.mp3"
                       className="single-item__cover"
                     >
-                      <img src="assets/img/covers/cover.svg" alt="" />
+                      <img src="/assets/img/covers/cover.svg" alt="" />
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
@@ -2015,7 +2014,6 @@ export const Main: FC = () => {
           </div>
         </div>
         {/*end partners*/}
-      </div>
-    </main>
+      </>
   );
 };

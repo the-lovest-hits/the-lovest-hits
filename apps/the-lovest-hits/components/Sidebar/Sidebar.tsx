@@ -5,7 +5,7 @@ export const Sidebar: FC = () => {
     <div className="sidebar">
       {/*sidebar logo*/}
       <div className="sidebar__logo">
-        <img src="assets/img/logo.svg" alt="" />
+        <img src="/assets/img/logo.svg" alt="" />
       </div>
       {/*end sidebar logo*/}
 

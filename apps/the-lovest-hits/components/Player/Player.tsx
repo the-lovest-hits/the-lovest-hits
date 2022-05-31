@@ -5,7 +5,7 @@ export const Player: FC = () => {
     <>
       <div className="player">
         <div className="player__cover">
-          <img src="assets/img/covers/cover.svg" alt="" />
+          <img src="/assets/img/covers/cover.svg" alt="" />
         </div>
 
         <div className="player__content">

@@ -8,6 +8,11 @@ import { UniqueGatekeeper } from './gatekeeper/unique.gatekeeper';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Genre } from '../../entities/genre';
 import { Repository } from 'typeorm';
+import { KusamaGatekeeper } from './gatekeeper/kusama.gatekeeper';
+import { pluck } from 'rxjs/operators';
+import { Artist } from '../../entities/artist';
+import { Observable } from 'rxjs';
+import { SubmittableResult } from '@polkadot/api';
 
 class ArtistCollectionSchema {
   mode = 'Nft';
@@ -86,8 +91,25 @@ export class BlockchainService {
     @Inject(forwardRef(() => ArtistsService)) private readonly artistsService: ArtistsService,
     private readonly configService: ConfigService<Config>,
     private readonly uniqueGatekeeper: UniqueGatekeeper,
+    private readonly kusamaGatekeeper: KusamaGatekeeper,
     @InjectRepository(Genre) private readonly genreRepository: Repository<Genre>,
   ) {
+  }
+
+  async createMintExtrinsic(
+    id: string,
+    address: string,
+  ): Promise<any> {
+    return this.kusamaGatekeeper.gate.post(
+      'balance/transfer',
+      {
+        address,
+        amount: (await this.artistsService.getArtistPrice(id)).price,
+        destination: this.kusamaGatekeeper.keyPair.address,
+      },
+    ).pipe(
+      pluck('data'),
+    );
   }
 
   async createRootCollection(): Promise<number> {
@@ -117,6 +139,21 @@ export class BlockchainService {
                 rule: "repeated",
                 type: "Genre",
               },
+              SpotifyUri: {
+                id: 4,
+                rule: "required",
+                type: "string",
+              },
+              MintedBy: {
+                id: 5,
+                rule: "required",
+                type: "string",
+              },
+              TracksCollectionId: {
+                id: 6,
+                rule: "required",
+                type: "string",
+              },
             },
           },
           Genre: await this.getGenreOptions(),
@@ -137,6 +174,167 @@ export class BlockchainService {
         return [`field${id}`, id];
       })),
     }
+  }
+
+  transferArtistToken(
+    tokenId: number,
+    to: string,
+    from = this.uniqueGatekeeper.keyPair.address,
+  ): Promise<any> {
+
+    return new Promise((resolve, reject) => {
+      const tx = this.uniqueGatekeeper.tx.unique.transfer(
+        {Substrate: to},
+        +this.configService.get<Config['unique']>('unique').collectionId,
+        tokenId,
+        1,
+      );
+      tx.signAndSend(this.uniqueGatekeeper.keyPair, (result) => {
+        const { events, status } = result;
+        if (status.isReady || status.isBroadcast) {
+          // resolve(result);
+        } else if (status.isInBlock || status.isFinalized) {
+          const errors = events.filter(e => e.event.data.method === 'ExtrinsicFailed');
+          if (errors.length > 0) {
+            reject(result);
+          }
+          if (events.filter(e => e.event.data.method === 'ExtrinsicSuccess').length > 0) {
+            resolve(result);
+          }
+        } else {
+          reject(result);
+        }
+
+
+      });
+    });
+
+
+
+    // return this.uniqueGatekeeper.createAndSubmitExtrinsic(
+    //   'patch',
+    //   'token/transfer',
+    //   {
+    //     to,
+    //     from,
+    //     tokenId,
+    //     collectionId: +this.configService.get<Config['unique']>('unique').collectionId,
+    //   },
+    // );
+  }
+
+  async mintArtistToken(
+    id: string,
+    cover: string,
+    owner: string,
+    collectionId: number,
+  ): Promise<{
+    collectionId: number;
+    tokenId: number;
+    owner: string;
+  }> {
+    const artist = await this.artistsService.getById(id);
+
+    console.log('artist', artist);
+
+    return this.uniqueGatekeeper.createToken({
+      owner,
+      collectionId: +this.configService.get<Config['unique']>('unique').collectionId,
+      constData: {
+        ipfsJson: JSON.stringify({
+          ipfs: cover,
+          type: "image",
+        }),
+        Name: artist.name,
+        Genres: artist.genres.map(({ id }) => id),
+        SpotifyUri: artist.spotifyUri,
+        MintedBy: owner,
+        TracksCollectionId: collectionId,
+      },
+      address: this.uniqueGatekeeper.keyPair.address,
+    });
+  }
+
+  async addAddressToWhiteList(
+    address: string,
+    collectionId: number,
+  ): Promise<any> {
+    const tx = this.uniqueGatekeeper.tx.unique.addToAllowList(collectionId, {Substrate: address});
+    tx.signAndSend(this.uniqueGatekeeper.keyPair, (result) => {
+      // console.log('result', result);
+    });
+
+  }
+
+
+  async mintArtistCollection({
+    id,
+    tokenPrefix,
+    description,
+    collectionCover,
+  }: {
+    id: string;
+    description: string;
+    tokenPrefix: string;
+    collectionCover: string;
+  }): Promise<number> {
+
+    const artist = await this.artistsService.getById(id);
+
+    return this.uniqueGatekeeper.createCollection(
+      this.uniqueGatekeeper.getCreateCollectionArguments({
+        name: artist.name,
+        tokenPrefix,
+        description: description + this.configService.get<Config['market']>('market').collectionDescPostfix,
+        variableOnChainSchema: {
+          collectionCover,
+        },
+        constOnChainSchema: {
+          NFTMeta: {
+            fields: {
+              ipfsJson: {
+                id: 1,
+                rule: "required",
+                type: "string",
+              },
+              Name: {
+                id: 2,
+                rule: "required",
+                type: "string",
+              },
+              SpotifyUri: {
+                id: 3,
+                rule: "required",
+                type: "string",
+              },
+              MintedBy: {
+                id: 3,
+                rule: "required",
+                type: "string",
+              },
+              Album: {
+                id: 3,
+                rule: "required",
+                type: "string",
+              },
+              TrackNumber: {
+                id: 3,
+                rule: "required",
+                type: "string",
+              },
+              ReleaseDate: {
+                id: 3,
+                rule: "required",
+                type: "string",
+              },
+            },
+          },
+        },
+        limits: {},
+        mintMode: true,
+        owner: this.uniqueGatekeeper.keyPair.address,
+      }),
+    );
   }
 
   // async mintArtistCollection(

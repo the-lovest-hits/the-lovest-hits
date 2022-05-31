@@ -23,7 +23,12 @@ export class KusamaGatekeeper extends Gatekeeper {}
       return {
         provider,
       }
-    }),
+    },
+      (configService) => {
+        return configService.get<Config['unique']>('unique').seed; // todo seed
+      },
+    ),
+
   ],
   exports: [
     KusamaGatekeeper,

@@ -6,7 +6,7 @@ export const Header: FC = () => {
       <div className="header__content">
         <div className="header__logo">
           <a href="#">
-            <img src="assets/img/logo.svg" alt="" />
+            <img src="/assets/img/logo.svg" alt="" />
           </a>
         </div>
 
@@ -114,7 +114,7 @@ export const Header: FC = () => {
                 Go to cart
               </a>
               <div className="header__product">
-                <img src="assets/img/store/item4.jpg" alt="" />
+                <img src="/assets/img/store/item4.jpg" alt="" />
                 <p>
                   <a href="#">Headphones ZR-991</a>
                 </p>
@@ -126,7 +126,7 @@ export const Header: FC = () => {
                 </button>
               </div>
               <div className="header__product">
-                <img src="assets/img/store/item3.jpg" alt="" />
+                <img src="/assets/img/store/item3.jpg" alt="" />
                 <p>
                   <a href="#">Music Blank</a>
                 </p>
@@ -138,7 +138,7 @@ export const Header: FC = () => {
                 </button>
               </div>
               <div className="header__product">
-                <img src="assets/img/store/item2.jpg" alt="" />
+                <img src="/assets/img/store/item2.jpg" alt="" />
                 <p>
                   <a href="#">Microphone R4</a>
                 </p>
