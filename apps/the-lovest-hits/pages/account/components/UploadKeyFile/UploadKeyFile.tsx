@@ -1,9 +1,11 @@
-function UploadKeyFile() {
+function UploadKeyFile(props) {
   return (
-    <div className="">
-      UploadKeyFile
+    <div className={props.className}>
+      <div className="cube__content">
+        UploadKeyFile
+      </div>
     </div>
-  )
+  );
 }
 
 export default UploadKeyFile;
