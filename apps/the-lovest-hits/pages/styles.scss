@@ -237,3 +237,14 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.cube{
+  transition: all .3s;
+
+  &__content {
+    background-color: #222227;
+    border-radius: 1rem;
+    padding: 1rem;
+    color: #c0c0c0;
+  }
+}
