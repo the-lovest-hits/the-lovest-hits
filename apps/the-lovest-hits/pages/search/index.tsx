@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { Breadcrumbs, Title, useBreadcrumbs } from '../../components/page-elements';
 
 const Search = () => {
 
@@ -8,8 +9,13 @@ const Search = () => {
   const { q } = router.query;
   const [ artists, setArtists ] = useState<any[]>([]);
 
+  const { setBreadcrumbs } = useBreadcrumbs();
 
   useEffect(() => {
+
+    setBreadcrumbs([
+      { name: 'Search' },
+    ]);
 
     const query = new URLSearchParams();
     query.set('q', q as string);
@@ -19,26 +25,16 @@ const Search = () => {
     fetch('/api/spotify/search?' + artistsQuery.toString())
       .then((res) => res.json())
       .then(({ artists }) => {
-        console.log('artists', artists.items);
         setArtists(artists.items);
       })
   }, [ q ]);
 
 
   return <>
-    <div className="row row--grid">
-      <div className="col-12">
-        <ul className="breadcrumb">
-          <li className="breadcrumb__item"><Link href="/">Home</Link></li>
-          <li className="breadcrumb__item breadcrumb__item--active">Search</li>
-        </ul>
-      </div>
 
-      <div className="col-12">
-        <div className="main__title main__title--page">
-          <h1>Search results for `{q}`</h1>
-        </div>
-      </div>
+      <Breadcrumbs />
+
+      <Title>Search results for `{q}`</Title>
 
       <section className="row row--grid">
         <div className="col-12">
@@ -87,7 +83,6 @@ const Search = () => {
 
       </section>
 
-    </div>
   </>;
 }
 

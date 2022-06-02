@@ -12,6 +12,7 @@ export const Header: FC = () => {
       const query = new URLSearchParams();
       query.set('q', inputRef.current.value);
       router.push('/search?' + query.toString());
+      inputRef.current.value = '';
     }
   }
 

@@ -1,3 +1,4 @@
+import { Breadcrumbs, Title, useBreadcrumbs } from '../../../components/page-elements';
 import Link from 'next/link';
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react';
@@ -9,6 +10,7 @@ const Artist = () => {
   const [ image, setImage ] = useState<string>('');
   const [ collection, setCollection ] = useState(null);
   const [ price, setPrice ] = useState({ commission: 20, price: 0 });
+  const { setBreadcrumbs } = useBreadcrumbs();
 
   useEffect(() => {
     if (id) {
@@ -19,33 +21,31 @@ const Artist = () => {
   }, [ id ]);
 
   useEffect(() => {
-    if (artist && artist.images) {
+
+    if (!artist) return;
+
+    if (artist.images) {
       setImage(artist.images.find(({ height }) => height === 640)?.url)
     }
 
-    if (artist && !artist.collectionId) {
+    if (!artist.collectionId) {
       fetch('/api/artists/' + id + '/price').then(
         (res) => res.json(),
       ).then(setPrice);
     }
+
+    setBreadcrumbs([
+      { name: 'Artists', link: '/artists' },
+      { name: artist.name },
+    ]);
   }, [ artist ]);
 
   return (
     <>
-    <div className="row row--grid">
-      <div className="col-12">
-        <ul className="breadcrumb">
-          <li className="breadcrumb__item"><Link href="/">Home</Link></li>
-          <li className="breadcrumb__item"><a href="releases.html">Releases</a></li>
-          <li className="breadcrumb__item breadcrumb__item--active">Release</li>
-        </ul>
-      </div>
 
-      <div className="col-12">
-        <div className="main__title main__title--page">
-          <h1>{artist?.name}</h1>
-        </div>
-      </div>
+      <Breadcrumbs />
+
+      <Title>{artist?.name}</Title>
 
       <div className="col-12">
         <div className="release">
@@ -132,7 +132,6 @@ const Artist = () => {
           </div>
         </div>
       </div>
-    </div>
     </>
   );
 }

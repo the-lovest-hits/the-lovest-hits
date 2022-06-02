@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { createRef, useEffect, useRef, useState } from 'react';
+import { Breadcrumbs, Title, useBreadcrumbs } from '../../../components/page-elements';
 
 const CreateArtist = () => {
   const router = useRouter();
@@ -10,6 +11,7 @@ const CreateArtist = () => {
   const [ collection, setCollection ] = useState(null);
   const [ price, setPrice ] = useState({ commission: 20, price: 0 });
   const formRef = useRef<HTMLFormElement>();
+  const { setBreadcrumbs } = useBreadcrumbs();
 
   useEffect(() => {
     if (id) {
@@ -34,6 +36,12 @@ const CreateArtist = () => {
         (res) => res.json(),
       ).then(setPrice);
     }
+
+    setBreadcrumbs([
+      { name: 'Artists', link: '/artists' },
+      { name: artist.name, link: `/artists/${artist.id}` },
+      { name: 'Create NFT' },
+    ]);
   }, [ artist ]);
 
   async function buy() {
@@ -65,22 +73,10 @@ const CreateArtist = () => {
   }
 
   return <>
-    <div className="row row--grid">
-      <div className="col-12">
-        <ul className="breadcrumb">
-          <li className="breadcrumb__item"><Link href="/">Home</Link></li>
-          <li className="breadcrumb__item"><Link href={ artist ? '../' + artist?.id : '/'}>
-            <a>{artist?.name}</a>
-          </Link></li>
-          <li className="breadcrumb__item breadcrumb__item--active">Minting NFT</li>
-        </ul>
-      </div>
 
-      <div className="col-12">
-        <div className="main__title main__title--page">
-          <h1>{artist?.name}</h1>
-        </div>
-      </div>
+    <Breadcrumbs />
+
+      <Title>{artist?.name}</Title>
 
       <div className="col-12">
         <div className="release">
@@ -143,7 +139,6 @@ const CreateArtist = () => {
           </div>
         </div>
       </div>
-    </div>
   </>
 }
 
