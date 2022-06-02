@@ -3,13 +3,15 @@ import { Artist } from '../../entities/artist';
 import { ArtistsService } from './artists.service';
 import { BlockchainService } from '../blockchain/blockchain.service';
 import { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
+import { Config } from '../config/config.module';
 
 export enum ArtistMintingStatus {
   ValidatePayment,
   MintingArtistCollection,
   MintingArtistToken,
   SaveInfo,
-  TransferToken,
+  AddingToWhiteList,
   Complete,
 }
 
@@ -22,6 +24,7 @@ export class ArtistsController {
   constructor(
     private readonly artistsService: ArtistsService,
     private readonly blockchainService: BlockchainService,
+    private readonly configService: ConfigService,
   ) {
   }
 
@@ -37,6 +40,13 @@ export class ArtistsController {
     @Param('id') id: string,
   ): Promise<{ price: number, commission: number }> {
     return this.artistsService.getArtistPrice(id);
+  }
+
+  @Get('mint-settings')
+  async getMintSettings(): Promise<any> {
+    return {
+      descriptionLength: 256 - this.configService.get<Config['market']>('market').collectionDescPostfix.length,
+    }
   }
 
   @Get(':id/mint')
@@ -90,19 +100,13 @@ export class ArtistsController {
           collectionId,
           tokenInfo.tokenId,
         ).then(() => {
-          this.mintingStatus.set(id, ArtistMintingStatus.TransferToken);
+          this.mintingStatus.set(id, ArtistMintingStatus.AddingToWhiteList);
 
-          // todo on sdk by minting
-          this.blockchainService.transferArtistToken(
-            tokenInfo.tokenId,
+          this.blockchainService.addAddressToWhiteList(
             extrinsic.signerPayloadJSON.address,
+            collectionId,
           ).then(() => {
             this.mintingStatus.set(id, ArtistMintingStatus.Complete);
-
-            this.blockchainService.addAddressToWhiteList(
-              extrinsic.signerPayloadJSON.address,
-              collectionId,
-            ).then(console.log);
           });
         });
 

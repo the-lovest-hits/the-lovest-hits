@@ -1,6 +1,28 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/router';
 
 export const Header: FC = () => {
+
+  const router = useRouter();
+  const [ search, setSearch ] = useState('');
+  const inputRef = useRef<HTMLInputElement>();
+
+  const searchKeyPress = (e: KeyboardEvent) => {
+    if (e.key === 'Enter' && inputRef.current.value.length > 3) {
+      const query = new URLSearchParams();
+      query.set('q', inputRef.current.value);
+      router.push('/search?' + query.toString());
+    }
+  }
+
+  useEffect(() => {
+    inputRef.current.addEventListener('keypress', searchKeyPress);
+
+    return () => {
+      inputRef.current.removeEventListener('keypress', searchKeyPress);
+    }
+  }, [ inputRef ]);
+
   return (
     <header className="header">
       <div className="header__content">
@@ -16,8 +38,8 @@ export const Header: FC = () => {
           <a href="#">Contacts</a>
         </nav>
 
-        <form action="#" className="header__search">
-          <input type="text" placeholder="Artist, track or podcast" />
+        <form className="header__search" onSubmit={(e) => e.preventDefault()}>
+          <input type="text" placeholder="Artist or track" ref={inputRef}/>
           <button type="button">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <path d="M21.71,20.29,18,16.61A9,9,0,1,0,16.61,18l3.68,3.68a1,1,0,0,0,1.42,0A1,1,0,0,0,21.71,20.29ZM11,18a7,7,0,1,1,7-7A7,7,0,0,1,11,18Z" />

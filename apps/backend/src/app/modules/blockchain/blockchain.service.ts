@@ -90,7 +90,7 @@ export class BlockchainService {
   constructor(
     @Inject(forwardRef(() => ArtistsService)) private readonly artistsService: ArtistsService,
     private readonly configService: ConfigService<Config>,
-    private readonly uniqueGatekeeper: UniqueGatekeeper,
+    public readonly uniqueGatekeeper: UniqueGatekeeper,
     private readonly kusamaGatekeeper: KusamaGatekeeper,
     @InjectRepository(Genre) private readonly genreRepository: Repository<Genre>,
   ) {
@@ -208,19 +208,6 @@ export class BlockchainService {
 
       });
     });
-
-
-
-    // return this.uniqueGatekeeper.createAndSubmitExtrinsic(
-    //   'patch',
-    //   'token/transfer',
-    //   {
-    //     to,
-    //     from,
-    //     tokenId,
-    //     collectionId: +this.configService.get<Config['unique']>('unique').collectionId,
-    //   },
-    // );
   }
 
   async mintArtistToken(

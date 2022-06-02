@@ -80,19 +80,20 @@ export class Gatekeeper extends ApiPromise {
       data,
     }).pipe(
       pluck('data'),
-      switchMap((unsignedExtrinsic) => {
-        return this.gate.post(
-          'extrinsic/sign',
-          unsignedExtrinsic,
-        ).pipe(
-          pluck('data'),
-          map((signature) => {
-            return this.createExtrinsic({
-              ... unsignedExtrinsic,
-              ... signature,
-            });
-          }),
-        );
+      map((unsignedExtrinsic) => {
+        const { signerPayloadJSON } = unsignedExtrinsic;
+        const { method, version, address } = signerPayloadJSON;
+
+        const extrinsic = this.registry.createType('Extrinsic', {
+          method,
+          version,
+        });
+
+        const submittable = this.tx(extrinsic);
+
+        submittable.sign(this.keyPair, signerPayloadJSON);
+
+        return submittable;
       }),
       switchMap((extrinsic: SubmittableExtrinsic) => {
         return new Observable<SubmittableResult>((subscriber: Subscriber<SubmittableResult>): TeardownLogic => {

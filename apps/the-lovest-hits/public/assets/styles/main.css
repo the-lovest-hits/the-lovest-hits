@@ -2250,6 +2250,7 @@ body::-webkit-scrollbar-thumb {
   z-index: 1;
   opacity: 1;
   transition: 0.5s ease;
+  cursor: pointer;
 }
 .album__cover a {
   position: absolute;

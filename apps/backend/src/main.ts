@@ -21,9 +21,17 @@ async function bootstrap() {
     app.setGlobalPrefix(globalPrefix);
   }
 
-  const bc = app.select(BlockchainModule).get(BlockchainService);
-
-  // bc.createRootCollection().then(console.log);
+  // todo remove this
+  // const collectionId = config.get('unique').collectionId;
+  // const bc = app.select(BlockchainModule).get(BlockchainService);
+  // // @ts-ignore
+  // const collection = (await bc.uniqueGatekeeper.rpc.unique.collectionById(+collectionId)).toHuman();
+  // if (!collection) {
+  //   bc.createRootCollection().then((createCollectionId) => {
+  //     console.log('UNIQUE_COLLECTION_ID=', createCollectionId);
+  //   });
+  //   return;
+  // }
 
   const port = config.get('port');
   await app.listen(port);
