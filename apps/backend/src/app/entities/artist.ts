@@ -18,7 +18,7 @@ export class Artist {
   @PrimaryColumn({
     type: 'varchar',
   })
-  id: number;
+  id: string;
 
   @Column({
     default: 0,

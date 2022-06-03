@@ -2,11 +2,13 @@ import { Track } from '../../entities/track';
 import { isBefore, sub } from 'date-fns';
 import { pluck } from 'rxjs';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { Album } from '../../entities/album';
 import { ArtistsService } from '../artists/artists.service';
 import { AlbumsService } from './albums.service';
 import { SpotifyService } from '../spotify/spotify.service';
+import { FindManyOptions } from 'typeorm/find-options/FindManyOptions';
+import { Artist } from '../../entities/artist';
 
 export class TracksService {
   constructor(
@@ -16,6 +18,19 @@ export class TracksService {
     private readonly albumsService: AlbumsService,
     private readonly spotifyService: SpotifyService,
   ) {
+  }
+
+  getReleases({
+    skip,
+    take,
+  }: FindManyOptions<Track>): Promise<[Track[], number]> {
+    return this.trackRepository.findAndCount({
+      take,
+      skip,
+      where: {
+        collectionId: Not(0),
+      },
+    });
   }
 
   async getById(id: string): Promise<Track> {

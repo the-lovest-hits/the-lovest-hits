@@ -27,8 +27,6 @@ export const Breadcrumbs = () => {
 
   const { breadcrumbs } = useBreadcrumbs();
 
-  console.log('breadcrumbs', breadcrumbs);
-
   return (
     <section className="row">
       <div className="col-12">
@@ -38,9 +36,9 @@ export const Breadcrumbs = () => {
             let className = "breadcrumb__item";
             if (index === breadcrumbs.length - 1 || !link) {
               className = [ className, "breadcrumb__item--active"].join(" ");
-              return <li className={className}>{ name }</li>
+              return <li className={className} key={index}>{ name }</li>
             }
-            return <li className={className}><Link href={link}>{name}</Link></li>;
+            return <li className={className} key={index}><Link href={link}>{name}</Link></li>;
           })}
         </ul>
       </div>

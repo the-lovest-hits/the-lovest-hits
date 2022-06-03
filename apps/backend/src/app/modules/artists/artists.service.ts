@@ -65,7 +65,9 @@ export class ArtistsService {
     const { commission, priceMultiplier } = this.configService.get('market');
     return {
       commission,
-      price: artist.popularity * artist.popularity * priceMultiplier,
+      price: Math.round(
+        (artist.popularity * artist.popularity * priceMultiplier) * 100
+      ) / 100,
     };
   }
 }

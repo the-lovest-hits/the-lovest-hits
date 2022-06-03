@@ -80,6 +80,18 @@ export class Track {
   )
   artist: Artist;
 
+  @Column({
+    name: 'artist_id',
+    nullable: true, // todo remove this
+  })
+  artistId: string;
+
+  @Column({
+    name: 'ipfs_pin',
+    nullable: true,
+  })
+  ipfsPin: string;
+
   @CreateDateColumn()
   created: Date;
 

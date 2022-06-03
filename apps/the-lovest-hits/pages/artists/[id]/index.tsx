@@ -1,4 +1,4 @@
-import { Breadcrumbs, Title, useBreadcrumbs } from '../../../components/page-elements';
+import { Article, Breadcrumbs, Title, useBreadcrumbs } from '../../../components/page-elements';
 import Link from 'next/link';
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react';
@@ -47,6 +47,7 @@ const Artist = () => {
 
       <Title>{artist?.name}</Title>
 
+      <section className="row">
       <div className="col-12">
         <div className="release">
           <div className="release__content">
@@ -70,9 +71,9 @@ const Artist = () => {
 
             {price?.price &&
             <>
-              <Link href={artist.id + '/create'}>
-                <a className="release__buy">Create for {price.price} KSM</a>
-              </Link>
+              <a className="release__buy" onClick={() => {
+                router.push(artist?.id + '/create');
+              }}>Create for {price.price} KSM</a>
             </>
             }
           </div>
@@ -116,22 +117,17 @@ const Artist = () => {
           </div>
         </div>
       </div>
+      </section>
 
-      <div className="col-12 col-lg-8">
-        <div className="article">
-          <div className="article__content">
-            <h4>About new album</h4>
+      <Article title="About new album">
+        <p>There are many <b>variations</b> of passages of Lorem Ipsum available, but the majority
+          have <a href="#">suffered</a> alteration in some form, by injected humour, or randomised words
+          which don't look even slightly believable.</p>
 
-            <p>There are many <b>variations</b> of passages of Lorem Ipsum available, but the majority
-              have <a href="#">suffered</a> alteration in some form, by injected humour, or randomised words
-              which don't look even slightly believable.</p>
-
-            <p>It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum
-              passages, and more recently with desktop publishing software like Aldus PageMaker including
-              versions of Lorem Ipsum.</p>
-          </div>
-        </div>
-      </div>
+        <p>It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum
+          passages, and more recently with desktop publishing software like Aldus PageMaker including
+          versions of Lorem Ipsum.</p>
+      </Article>
     </>
   );
 }

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { createRef, useEffect, useRef, useState } from 'react';
-import { Breadcrumbs, Title, useBreadcrumbs } from '../../../components/page-elements';
+import { Article, Breadcrumbs, Title, useBreadcrumbs } from '../../../components/page-elements';
 
 const CreateArtist = () => {
   const router = useRouter();
@@ -74,10 +74,11 @@ const CreateArtist = () => {
 
   return <>
 
-    <Breadcrumbs />
+      <Breadcrumbs />
 
       <Title>{artist?.name}</Title>
 
+    <section className="row">
       <div className="col-12">
         <div className="release">
           <div className="release__content">
@@ -124,21 +125,18 @@ const CreateArtist = () => {
         </div>
       </div>
 
-      <div className="col-12 col-lg-8">
-        <div className="article">
-          <div className="article__content">
-            <h4>TODO About creation</h4>
+    </section>
 
-            <p>There are many <b>variations</b> of passages of Lorem Ipsum available, but the majority
-              have <a href="#">suffered</a> alteration in some form, by injected humour, or randomised words
-              which don't look even slightly believable.</p>
 
-            <p>It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum
-              passages, and more recently with desktop publishing software like Aldus PageMaker including
-              versions of Lorem Ipsum.</p>
-          </div>
-        </div>
-      </div>
+    <Article title="TODO About creation">
+      <p>There are many <b>variations</b> of passages of Lorem Ipsum available, but the majority
+        have <a href="#">suffered</a> alteration in some form, by injected humour, or randomised words
+        which don't look even slightly believable.</p>
+
+      <p>It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum
+        passages, and more recently with desktop publishing software like Aldus PageMaker including
+        versions of Lorem Ipsum.</p>
+    </Article>
   </>
 }
 

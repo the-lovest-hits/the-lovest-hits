@@ -1,6 +1,5 @@
-const Artists = () => {
+import { Title } from '../../components/page-elements';
 
-  return <div>Artists</div>;
+export default function Artists() {
+  return (<Title>Artists</Title>)
 }
-
-export default Artists;
