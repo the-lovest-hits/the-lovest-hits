@@ -10,6 +10,8 @@ import { TracksModule } from './modules/tracks/tracks.module';
 import { Track } from './entities/track';
 import { Album } from './entities/album';
 import { BlockchainModule } from './modules/blockchain/blockchain.module';
+import { Event } from './entities/event';
+import { Account } from './entities/account';
 
 @Module({
   imports: [
@@ -24,6 +26,8 @@ import { BlockchainModule } from './modules/blockchain/blockchain.module';
           Genre,
           Track,
           Album,
+          Event,
+          Account,
         ],
         synchronize: true,
         ... configService.get<Config['postgres']>('postgres'),

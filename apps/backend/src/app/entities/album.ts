@@ -1,9 +1,9 @@
 import {
   Column,
   CreateDateColumn,
-  Entity,
+  Entity, JoinColumn,
   ManyToOne,
-  OneToMany,
+  OneToMany, OneToOne,
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -54,9 +54,11 @@ export class Album {
 
   @ManyToOne(
     () => Artist,
-    (artist) => artist.albums,
     { eager: true },
   )
+  @JoinColumn({
+    name: 'artist_id',
+  })
   artist: Artist;
 
   @CreateDateColumn()

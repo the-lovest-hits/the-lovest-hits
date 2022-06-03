@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Artist } from '../../entities/artist';
 import { In, Repository } from 'typeorm';
@@ -8,6 +8,9 @@ import { isBefore, sub } from 'date-fns';
 import { pluck } from 'rxjs';
 import { ConfigService } from '@nestjs/config';
 import { Config } from '../config/config.module';
+import { BlockchainService } from '../blockchain/blockchain.service';
+import { EventsService } from '../events/events.service';
+import { EventType } from '../../entities/event';
 
 @Injectable()
 export class ArtistsService {
@@ -16,19 +19,81 @@ export class ArtistsService {
     @InjectRepository(Genre) private readonly genreRepository: Repository<Genre>,
     private readonly spotifyService: SpotifyService,
     private readonly configService: ConfigService<Config>,
+    private readonly blockchainService: BlockchainService,
+    @Inject(forwardRef(() => EventsService)) private readonly eventsService: EventsService,
   ) {
   }
 
-  async updateMintingInfo(
-    id: string | number,
-    collectionId: number,
-    tokenId: number,
-  ): Promise<Artist> {
-    const artist = await this.getById(String(id));
-    artist.tokenId = tokenId;
+  async create(
+    id: Artist['id'],
+    address: string,
+    collectionFields: {
+      tokenPrefix: string;
+      description: string;
+      collectionCover: string;
+    }
+  ) {
+    const artist = await this.getById(id as string);
+
+    this.eventsService.createAndSave({
+      artist,
+      from: address,
+      to: address,
+      type: EventType.OwnershipApproved,
+    }).then();
+
+    const collectionId = await this.blockchainService.mintArtistCollection({
+      artist,
+      ... collectionFields,
+    });
+
     artist.collectionId = collectionId;
     await this.artistRepository.save(artist);
-    return artist;
+
+    this.eventsService.createAndSave({
+      artist,
+      from: address,
+      to: address,
+      type: EventType.CollectionCreated,
+      meta: {
+        collectionId,
+      },
+    }).then();
+
+    const { tokenId } = await this.blockchainService.mintArtistToken(
+      artist,
+      collectionFields.collectionCover,
+      address,
+    );
+
+    artist.tokenId = tokenId;
+    await this.artistRepository.save(artist);
+
+    this.eventsService.createAndSave({
+      artist,
+      from: address,
+      to: address,
+      type: EventType.TokenCreated,
+      meta: {
+        tokenId,
+      },
+    }).then();
+
+    await this.blockchainService.addAddressToWhiteList(
+      address,
+      collectionId,
+    );
+
+    this.eventsService.createAndSave({
+      artist,
+      from: address,
+      to: address,
+      type: EventType.AddedToWhiteList,
+      meta: {
+        address,
+      },
+    }).then();
+
   }
 
   async getById(id: string): Promise<Artist> {

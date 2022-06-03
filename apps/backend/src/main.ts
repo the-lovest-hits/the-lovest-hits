@@ -11,6 +11,8 @@ import { ConfigService } from '@nestjs/config';
 import { Config } from './app/modules/config/config.module';
 import { BlockchainModule } from './app/modules/blockchain/blockchain.module';
 import { BlockchainService } from './app/modules/blockchain/blockchain.service';
+import { ArtistsModule } from './app/modules/artists/artists.module';
+import { ArtistsService } from './app/modules/artists/artists.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -32,6 +34,17 @@ async function bootstrap() {
   //   });
   //   return;
   // }
+
+  // todo remove this
+  // const artistsService = app.select(ArtistsModule).get(ArtistsService);
+  // artistsService.create(
+  //   '3hE8S8ohRErocpkY7uJW4a',
+  //   'yGDRdyKPLudSprAQgeCfeWLHkyZFD6yyuttoeGgRUeHBQgPod',
+  //   {
+  //     collectionCover: 'QmQFUZmza4hpwLFdwfLZCRsb8u6tLgFTkJx3Fxeazm4CDJ', // todo request
+  //     tokenPrefix: 'WT',
+  //     description: 'Som description',
+  //   }).then()
 
   const port = config.get('port');
   await app.listen(port);

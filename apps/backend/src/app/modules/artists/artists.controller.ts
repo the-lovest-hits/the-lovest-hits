@@ -46,6 +46,7 @@ export class ArtistsController {
   async getMintSettings(): Promise<any> {
     return {
       descriptionLength: 256 - this.configService.get<Config['market']>('market').collectionDescPostfix.length,
+      collectionId: +this.configService.get<Config['unique']>('unuque').collectionId,
     }
   }
 
@@ -57,6 +58,7 @@ export class ArtistsController {
     return this.blockchainService.createMintExtrinsic(
       id,
       address,
+      (await this.artistsService.getArtistPrice(id)).price,
     );
   }
 
@@ -71,47 +73,12 @@ export class ArtistsController {
     @Res() res: Response,
   ): Promise<any> {
 
-    // todo transaction mining
-    console.log('ex', extrinsic, artistFields);
-
-    this.mintingStatus.set(id, ArtistMintingStatus.ValidatePayment);
-    // todo payment transaction mining
-    this.mintingStatus.set(id, ArtistMintingStatus.MintingArtistCollection);
-    this.blockchainService.mintArtistCollection({
-      id: String(id),
+    this.artistsService.create(id,
+      extrinsic.signerPayloadJSON.address,
+      {
       collectionCover: 'QmQFUZmza4hpwLFdwfLZCRsb8u6tLgFTkJx3Fxeazm4CDJ', // todo request
       ... artistFields,
-    }).then((collectionId) => {
-      console.log('collection id ', collectionId);
-      this.mintingStatus.set(id, ArtistMintingStatus.MintingArtistToken);
-
-      this.blockchainService.mintArtistToken(
-        String(id),
-        'QmQFUZmza4hpwLFdwfLZCRsb8u6tLgFTkJx3Fxeazm4CDJ',
-        extrinsic.signerPayloadJSON.address,
-        collectionId,
-      ).then((tokenInfo) => {
-        console.log('tokenInfo', tokenInfo);
-
-        this.mintingStatus.set(id, ArtistMintingStatus.SaveInfo);
-
-        this.artistsService.updateMintingInfo(
-          id,
-          collectionId,
-          tokenInfo.tokenId,
-        ).then(() => {
-          this.mintingStatus.set(id, ArtistMintingStatus.AddingToWhiteList);
-
-          this.blockchainService.addAddressToWhiteList(
-            extrinsic.signerPayloadJSON.address,
-            collectionId,
-          ).then(() => {
-            this.mintingStatus.set(id, ArtistMintingStatus.Complete);
-          });
-        });
-
-      });
-    });
+    }).then();
 
     res.status(201).send({ hello: 'chuvak' });
 

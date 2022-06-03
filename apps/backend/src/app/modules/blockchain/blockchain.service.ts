@@ -88,7 +88,6 @@ interface ArtistCollectionOptions {
 export class BlockchainService {
 
   constructor(
-    @Inject(forwardRef(() => ArtistsService)) private readonly artistsService: ArtistsService,
     private readonly configService: ConfigService<Config>,
     public readonly uniqueGatekeeper: UniqueGatekeeper,
     private readonly kusamaGatekeeper: KusamaGatekeeper,
@@ -99,12 +98,13 @@ export class BlockchainService {
   async createMintExtrinsic(
     id: string,
     address: string,
+    price: number,
   ): Promise<any> {
     return this.kusamaGatekeeper.gate.post(
       'balance/transfer',
       {
         address,
-        amount: (await this.artistsService.getArtistPrice(id)).price,
+        amount: price,
         destination: this.kusamaGatekeeper.keyPair.address,
       },
     ).pipe(
@@ -211,18 +211,14 @@ export class BlockchainService {
   }
 
   async mintArtistToken(
-    id: string,
+    artist: Artist,
     cover: string,
     owner: string,
-    collectionId: number,
   ): Promise<{
     collectionId: number;
     tokenId: number;
     owner: string;
   }> {
-    const artist = await this.artistsService.getById(id);
-
-    console.log('artist', artist);
 
     return this.uniqueGatekeeper.createToken({
       owner,
@@ -236,7 +232,7 @@ export class BlockchainService {
         Genres: artist.genres.map(({ id }) => id),
         SpotifyUri: artist.spotifyUri,
         MintedBy: owner,
-        TracksCollectionId: collectionId,
+        TracksCollectionId: artist.collectionId,
       },
       address: this.uniqueGatekeeper.keyPair.address,
     });
@@ -255,18 +251,16 @@ export class BlockchainService {
 
 
   async mintArtistCollection({
-    id,
+    artist,
     tokenPrefix,
     description,
     collectionCover,
   }: {
-    id: string;
+    artist: Artist;
     description: string;
     tokenPrefix: string;
     collectionCover: string;
   }): Promise<number> {
-
-    const artist = await this.artistsService.getById(id);
 
     return this.uniqueGatekeeper.createCollection(
       this.uniqueGatekeeper.getCreateCollectionArguments({
