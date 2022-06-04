@@ -1,8 +1,12 @@
-function UploadKeyFile(props) {
+import { CubeEntity } from "../../add";
+
+function UploadKeyFile({className, setActiveCube}) {
   return (
-    <div className={props.className}>
-      <div className="cube__content">
-        UploadKeyFile
+    <div className={className} onClick={() => setActiveCube(CubeEntity.UploadKeyFile)}>
+      <div className="account-add-cube__content">
+        <p>UploadKeyFile</p>
+
+        <p>DragnDrop place</p>
       </div>
     </div>
   );

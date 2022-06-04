@@ -238,7 +238,7 @@ code {
     monospace;
 }
 
-.cube{
+.account-add-cube{
   transition: all .3s;
 
   &__content {
@@ -246,7 +246,30 @@ code {
     border-radius: 1rem;
     padding: 1rem;
     color: #c0c0c0;
+
+    &--polkadot-cube & {
+      padding: 20px;
+
+      .btn {
+        padding: 0 20px;
+      }
+
+      .logo {
+        width: 40px;
+        height: 40px;
+        margin-right: 10px;
+      }
+    }
   }
+
+  &--polkadot-cube {
+    //.account-add-cube__content {
+    //  padding: 20px;
+    //}
+
+
+  }
+
 }
 
 .input {
@@ -262,12 +285,17 @@ code {
   & + & {
     margin-top: 20px;
   }
+
+  &[disabled] {
+    background-color: #2f2f35;
+    color: rgba(255, 255, 255, 0.5);
+  }
 }
 
 .btn {
   width: auto;
   min-width: 120px;
-  height: 50px;
+  min-height: 54px;
   border-radius: 12px;
   background-color: #222227;
   display: inline-flex;
@@ -278,12 +306,17 @@ code {
   font-size: 14px;
   position: relative;
   z-index: 2;
+  line-height: 1;
   text-transform: uppercase;
   font-family: 'Inter', sans-serif;
   font-weight: 500;
-  padding: 0 20px;
+  padding: 20px;
   margin-top: 20px;
   margin-right: 20px;
+
+  &[disabled] {
+    background-color: #4e4e4e;
+  }
 
   &--success {
     background-color: #25a56a;
@@ -292,18 +325,5 @@ code {
 
   &--secondary {
     background: gray;
-  }
-}
-
-.polkadot-cube {
-  .cube__content {
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-  }
-
-  .logo {
-    width: 150px;
-    height: 150px;
   }
 }
