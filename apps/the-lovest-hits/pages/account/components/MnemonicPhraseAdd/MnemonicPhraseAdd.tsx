@@ -39,18 +39,22 @@ function MnemonicPhraseAdd({setActiveCube, className}) {
   return (
     <div className={className} onClick={() => setActiveCube(CubeEntity.MnemonicPhraseAdd)}>
       <form className="account-add-cube__content" onSubmit={handleSubmit(toFormSubmit)}>
-        <Input className="input" useFormData={mnemonicPhraseUseFormData} disabled={nextStepButtonsVisible}/>
-        <Input className="input" useFormData={mnemonicPasswordUseFormData} disabled={nextStepButtonsVisible} />
-        <Button type="submit" className="btn btn--success" disabled={!isValid || nextStepButtonsVisible}>Generate</Button>
-        { nextStepButtonsVisible
-          ? <>
-              <Button className="btn btn--success" onClick={(e) => toDownloadKeyJson(e)}>
-                Download KeyJson File
-              </Button>
-              <Button className="btn btn--success" onClick={toNext}>Next</Button>
-            </>
-          : null
-        }
+        <div className="inputs-block">
+          <Input className="input" useFormData={mnemonicPhraseUseFormData} disabled={nextStepButtonsVisible}/>
+          <Input className="input" useFormData={mnemonicPasswordUseFormData} disabled={nextStepButtonsVisible} />
+        </div>
+        <div className="buttons-block">
+          <Button type="submit" className="btn btn--success" disabled={!isValid || nextStepButtonsVisible}>Generate</Button>
+          { nextStepButtonsVisible
+            ? <>
+                <Button className="btn btn--success" onClick={(e) => toDownloadKeyJson(e)}>
+                  Download KeyJson File
+                </Button>
+                <Button className="btn btn--success" onClick={toNext}>Next</Button>
+              </>
+            : null
+          }
+        </div>
       </form>
     </div>
   );
