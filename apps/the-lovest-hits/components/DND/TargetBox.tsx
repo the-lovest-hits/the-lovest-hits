@@ -13,7 +13,7 @@ export interface TargetBoxProps {
 
 export const TargetBox: FC<TargetBoxProps> = (props) => {
   const { children, onDrop } = props;
-  const [{ canDrop, isOver }, drop] = useDrop(
+  const drop = useDrop(
     () => ({
       accept: [NativeTypes.FILE],
       drop(item: { files: any[] }) {
