@@ -372,15 +372,16 @@ code {
 .file-list {
   height: 100%;
   li {
-    text-align: center;
     list-style: none;
     background: #4e4e4e3b;
     padding: 10px;
     height: 100%;
     display: flex;
     align-items: center;
+    text-align: left;
     border-radius: 10px;
     border: 1px solid #4e4e4e;
+    overflow: hidden;
   }
 }
 

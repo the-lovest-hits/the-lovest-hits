@@ -1,7 +1,7 @@
-import ConnectPolkadotApp from "./components/ConnectPolkadotApp/ConnectPolkadotApp";
-import MnemonicPhraseAdd from "./components/MnemonicPhraseAdd/MnemonicPhraseAdd";
-import UploadKeyFile from "./components/UploadKeyFile/UploadKeyFile";
 import { useState } from "react";
+import MnemonicPhraseAdd from "./components/MnemonicPhraseAdd";
+import UploadKeyFile from "./components/UploadKeyFile";
+import ConnectPolkadotApp from "./components/ConnectPolkadotApp";
 
 export enum CubeEntity {
   MnemonicPhraseAdd = 'MnemonicPhraseAdd',
@@ -9,7 +9,7 @@ export enum CubeEntity {
   ConnectPolkadotApp = 'ConnectPolkadotApp'
 }
 
-function AccountAdd() {
+export default function AccountAdd() {
   const [activeCube, setActiveCube] = useState(CubeEntity.MnemonicPhraseAdd);
 
   const setActiveCubeHandler = (activeCube: CubeEntity) => {
@@ -35,5 +35,3 @@ function AccountAdd() {
     </div>
   )
 }
-
-export default AccountAdd;
