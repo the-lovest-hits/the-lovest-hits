@@ -23,6 +23,15 @@ const nextConfig = {
       ],
     };
   },
+  async redirects() {
+    return [
+      {
+        source: '/account',
+        destination: '/account/add',
+        permanent: false,
+      },
+    ]
+  },
 };
 
 module.exports = withNx(nextConfig);
