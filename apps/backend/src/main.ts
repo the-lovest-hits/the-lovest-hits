@@ -13,6 +13,8 @@ import { BlockchainModule } from './app/modules/blockchain/blockchain.module';
 import { BlockchainService } from './app/modules/blockchain/blockchain.service';
 import { ArtistsModule } from './app/modules/artists/artists.module';
 import { ArtistsService } from './app/modules/artists/artists.service';
+import { TracksModule } from './app/modules/tracks/tracks.module';
+import { TracksService } from './app/modules/tracks/tracks.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -45,6 +47,17 @@ async function bootstrap() {
   //     tokenPrefix: 'WT',
   //     description: 'Som description',
   //   }).then()
+
+  // todo remove this
+  // const tracksService = app.select(TracksModule).get(TracksService);
+  // tracksService.create(
+  //   '0vZzCD8Gy1w6ph5PzLctVo',
+  //   'yGDRdyKPLudSprAQgeCfeWLHkyZFD6yyuttoeGgRUeHBQgPod',
+  //   {
+  //     image: 'QmQFUZmza4hpwLFdwfLZCRsb8u6tLgFTkJx3Fxeazm4CDJ',
+  //     description: '',
+  //   },
+  // ).then(console.log);
 
   const port = config.get('port');
   await app.listen(port);

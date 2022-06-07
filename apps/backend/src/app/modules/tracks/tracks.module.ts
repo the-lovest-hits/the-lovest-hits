@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { SpotifyModule } from '../spotify/spotify.module';
 import { TracksController } from './tracks.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -9,11 +9,13 @@ import { ArtistsModule } from '../artists/artists.module';
 import { AlbumsService } from './albums.service';
 import { TracksService } from './tracks.service';
 import { AlbumsController } from './albums.controller';
+import { EventsModule } from '../events/events.module';
 
 @Module({
   imports: [
-    SpotifyModule,
-    ArtistsModule,
+    forwardRef(() => SpotifyModule),
+    forwardRef(() => ArtistsModule),
+    forwardRef(() => EventsModule),
     TypeOrmModule.forFeature([
       Album,
       Track,

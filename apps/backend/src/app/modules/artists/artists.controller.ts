@@ -1,30 +1,22 @@
-import { Body, Controller, Get, NotFoundException, Param, Post, Query, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Res } from '@nestjs/common';
 import { Artist } from '../../entities/artist';
 import { ArtistsService } from './artists.service';
 import { BlockchainService } from '../blockchain/blockchain.service';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { Config } from '../config/config.module';
+import { EventsService } from '../events/events.service';
+import { EventType } from '../../entities/event';
 
-export enum ArtistMintingStatus {
-  ValidatePayment,
-  MintingArtistCollection,
-  MintingArtistToken,
-  SaveInfo,
-  AddingToWhiteList,
-  Complete,
-}
 
 @Controller('artists')
 export class ArtistsController {
-
-  // todo cache
-  private mintingStatus = new Map<Artist['id'], ArtistMintingStatus>();
 
   constructor(
     private readonly artistsService: ArtistsService,
     private readonly blockchainService: BlockchainService,
     private readonly configService: ConfigService,
+    private readonly eventsService: EventsService,
   ) {
   }
 
@@ -51,11 +43,11 @@ export class ArtistsController {
   }
 
   @Get(':id/mint')
-  async getMintPaymentExtrinsic(
+  async getInitialPurchaseExtrinsic(
     @Param('id') id: string,
     @Query('address') address: string,
   ): Promise<any> {
-    return this.blockchainService.createMintExtrinsic(
+    return this.blockchainService.createInitialPurchaseExtrinsic(
       id,
       address,
       (await this.artistsService.getArtistPrice(id)).price,
@@ -69,12 +61,32 @@ export class ArtistsController {
     @Body('fields') artistFields: {
       tokenPrefix: string;
       description: string;
+      collectionCover: string;
     },
     @Res() res: Response,
   ): Promise<any> {
 
+    const { address } = extrinsic.signerPayloadJSON
+
+    this.eventsService.createAndSave({
+      type: EventType.InitialPurchaseRequest,
+      from: address,
+      to: address,
+      artist: id,
+    }).then();
+
+    // todo mine payment extrinsic
+    await new Promise(resolve => setTimeout(resolve, 3000));
+
+    this.eventsService.createAndSave({
+      type: EventType.PurchaseApproved,
+      from: address,
+      to: address,
+      artist: id,
+    }).then();
+
     this.artistsService.create(id,
-      extrinsic.signerPayloadJSON.address,
+      address,
       {
       collectionCover: 'QmQFUZmza4hpwLFdwfLZCRsb8u6tLgFTkJx3Fxeazm4CDJ', // todo request
       ... artistFields,
@@ -82,15 +94,5 @@ export class ArtistsController {
 
     res.status(201).send({ hello: 'chuvak' });
 
-  }
-
-  @Get(':id/mint_status')
-  async mintStatus(
-    @Param('id') id: Artist['id'],
-  ): Promise<ArtistMintingStatus> {
-    if (!this.mintingStatus.has(id)) {
-      throw new NotFoundException();
-    }
-    return this.mintingStatus.get(id);
   }
 }

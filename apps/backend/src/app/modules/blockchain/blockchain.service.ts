@@ -13,6 +13,7 @@ import { pluck } from 'rxjs/operators';
 import { Artist } from '../../entities/artist';
 import { Observable } from 'rxjs';
 import { SubmittableResult } from '@polkadot/api';
+import { Track } from '../../entities/track';
 
 class ArtistCollectionSchema {
   mode = 'Nft';
@@ -95,7 +96,7 @@ export class BlockchainService {
   ) {
   }
 
-  async createMintExtrinsic(
+  async createInitialPurchaseExtrinsic(
     id: string,
     address: string,
     price: number,
@@ -238,6 +239,40 @@ export class BlockchainService {
     });
   }
 
+  async mintTrackToken(
+    track: Track,
+    cover: string,
+    owner: string,
+  ): Promise<any> {
+
+    // @ts-ignore
+    const allowList = await this.uniqueGatekeeper.rpc.unique.allowlist(track.artist.collectionId);
+
+    const allowedToMint = !!allowList.toHuman().find(({ Substrate }) => Substrate === owner);
+
+    if (!allowedToMint) {
+      throw new Error(`Address ${owner} cannot mint token of this collections`);
+    }
+
+    return this.uniqueGatekeeper.createToken({
+      // owner, // todo nesting
+      collectionId: track.artist.collectionId,
+      constData: {
+        ipfsJson: JSON.stringify({
+          ipfs: cover,
+          type: "image",
+        }),
+        Name: track.name,
+        SpotifyUri: track.spotifyUri,
+        MintedBy: owner,
+        Album: track.album.name,
+        TrackNumber: String(track.trackNumber),
+        ReleaseDate: track.album.releaseDate,
+      },
+      address: this.uniqueGatekeeper.keyPair.address,
+    });
+  }
+
   async addAddressToWhiteList(
     address: string,
     collectionId: number,
@@ -247,6 +282,16 @@ export class BlockchainService {
       // console.log('result', result);
     });
 
+  }
+
+  async removeAddressFromWhiteList(
+    address: string,
+    collectionId: number,
+  ): Promise<any> {
+    const tx = this.uniqueGatekeeper.tx.unique.removeFromAllowList(collectionId, {Substrate: address});
+    tx.signAndSend(this.uniqueGatekeeper.keyPair, (result) => {
+      // console.log('result', result);
+    });
   }
 
 
@@ -289,29 +334,31 @@ export class BlockchainService {
                 type: "string",
               },
               MintedBy: {
-                id: 3,
+                id: 4,
                 rule: "required",
                 type: "string",
               },
               Album: {
-                id: 3,
+                id: 5,
                 rule: "required",
                 type: "string",
               },
               TrackNumber: {
-                id: 3,
+                id: 6,
                 rule: "required",
                 type: "string",
               },
               ReleaseDate: {
-                id: 3,
+                id: 7,
                 rule: "required",
                 type: "string",
               },
             },
           },
         },
-        limits: {},
+        limits: {
+          transfersEnabled: false,
+        },
         mintMode: true,
         owner: this.uniqueGatekeeper.keyPair.address,
       }),

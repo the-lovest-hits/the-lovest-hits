@@ -5,6 +5,7 @@ import { Account } from '../../entities/account';
 import { AccountsService } from './accounts.service';
 import { EventsService } from './events.service';
 import { ArtistsModule } from '../artists/artists.module';
+import { TracksModule } from '../tracks/tracks.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { ArtistsModule } from '../artists/artists.module';
       Event, Account,
     ]),
     forwardRef(() => ArtistsModule),
+    forwardRef(() => TracksModule),
   ],
   providers: [
     AccountsService,

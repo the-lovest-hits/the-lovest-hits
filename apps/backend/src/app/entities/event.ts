@@ -12,10 +12,13 @@ import { Track } from './track';
 
 export enum EventType {
   Meta = 'meta',
-  OwnershipApproved = 'ownership_approved',
+  InitialPurchaseRequest = 'initial_purchase_request',
+  PurchaseApproved = 'purchase_approved',
   CollectionCreated = 'collection_created',
-  TokenCreated = 'token_created',
+  ArtistTokenCreated = 'artist_token_created',
+  TrackTokenCreated = 'track_token_created',
   AddedToWhiteList = 'added_to_white_list',
+  RemovedFromWhiteList = 'removed_from_white_list',
 }
 
 @Entity({
@@ -56,6 +59,9 @@ export class Event {
   @ManyToOne(() => Track, {
     eager: true,
     nullable: true,
+  })
+  @JoinColumn({
+    name: 'track_id',
   })
   track: Track;
 

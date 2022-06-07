@@ -82,7 +82,7 @@ export interface CreateCollectionArguments extends CollectionInfoBase {
 export interface CreateTokenArguments {
   collectionId: number;
   address: string;
-  owner: string;
+  owner?: string;
   constData: AnyObject;
 }
 

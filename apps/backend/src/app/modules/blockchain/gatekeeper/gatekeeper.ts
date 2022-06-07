@@ -6,7 +6,7 @@ import { DynamicModule, Provider } from '@nestjs/common';
 import { HttpModuleOptions } from '@nestjs/axios/dist/interfaces';
 import { ApiOptions } from '@polkadot/api/types';
 import { Method } from 'axios';
-import { Observable, Subscriber, TeardownLogic } from 'rxjs';
+import { catchError, Observable, Subscriber, TeardownLogic, throwError } from 'rxjs';
 import { map, pluck, switchMap } from 'rxjs/operators';
 import { SubmittableExtrinsic } from '@polkadot/api/promise/types';
 import { Keyring } from '@polkadot/keyring';
@@ -79,6 +79,10 @@ export class Gatekeeper extends ApiPromise {
       url,
       data,
     }).pipe(
+      catchError(err => {
+        console.error(JSON.stringify({ method, url }), err);
+        return throwError(err);
+      }),
       pluck('data'),
       map((unsignedExtrinsic) => {
         const { signerPayloadJSON } = unsignedExtrinsic;

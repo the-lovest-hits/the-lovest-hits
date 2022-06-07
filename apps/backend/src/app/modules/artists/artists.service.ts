@@ -35,13 +35,6 @@ export class ArtistsService {
   ) {
     const artist = await this.getById(id as string);
 
-    this.eventsService.createAndSave({
-      artist,
-      from: address,
-      to: address,
-      type: EventType.OwnershipApproved,
-    }).then();
-
     const collectionId = await this.blockchainService.mintArtistCollection({
       artist,
       ... collectionFields,
@@ -73,7 +66,7 @@ export class ArtistsService {
       artist,
       from: address,
       to: address,
-      type: EventType.TokenCreated,
+      type: EventType.ArtistTokenCreated,
       meta: {
         tokenId,
       },
@@ -91,6 +84,7 @@ export class ArtistsService {
       type: EventType.AddedToWhiteList,
       meta: {
         address,
+        collectionId: collectionId,
       },
     }).then();
 

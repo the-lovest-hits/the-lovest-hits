@@ -8,7 +8,8 @@ import { CubeEntity } from "../../add";
 import { TargetBox } from "../../../../components/DND";
 import { FileList } from "../../../../components/DND";
 
-function UploadKeyFile({className, setActiveCube}) {
+function UploadKeyFile({className, setActiveCube, active, children, title}) {
+
   const [droppedFiles, setDroppedFiles] = useState<File[]>([]);
 
   const handleFileDrop = useCallback(
@@ -24,12 +25,20 @@ function UploadKeyFile({className, setActiveCube}) {
 
   return (
     <div className={className} onClick={() => setActiveCube(CubeEntity.UploadKeyFile)}>
-      <div className="account-add-cube__content">
-        <DndProvider backend={HTML5Backend}>
-          <TargetBox onDrop={handleFileDrop}>
-            <FileList files={droppedFiles} />
-          </TargetBox>
-        </DndProvider>
+      <div className="plan plan--green">
+
+        <h3 className="plan__title">{ title }</h3>
+
+        <span className="plan__price"><span>Uploader generated yearly KeyFile.json</span></span>
+
+        {!active ? children : (
+          <DndProvider backend={HTML5Backend}>
+            <TargetBox onDrop={handleFileDrop}>
+              <FileList files={droppedFiles} />
+            </TargetBox>
+          </DndProvider>
+        )}
+
       </div>
     </div>
   );

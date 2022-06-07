@@ -24,13 +24,7 @@ const nextConfig = {
     };
   },
   async redirects() {
-    return [
-      {
-        source: '/account',
-        destination: '/account/add',
-        permanent: false,
-      },
-    ]
+    return [];
   },
 };
 

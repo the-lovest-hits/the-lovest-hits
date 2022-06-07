@@ -13,7 +13,7 @@ export interface TargetBoxProps {
 
 export const TargetBox: FC<TargetBoxProps> = (props) => {
   const { children, onDrop } = props;
-  const drop = useDrop(
+  const [priperties, target] = useDrop(
     () => ({
       accept: [NativeTypes.FILE],
       drop(item: { files: any[] }) {
@@ -46,7 +46,7 @@ export const TargetBox: FC<TargetBoxProps> = (props) => {
   );
 
   return (
-    <div className={'dnd-place'} ref={drop}>
+    <div className={'dnd-place'} ref={target}>
       {children}
     </div>
   );

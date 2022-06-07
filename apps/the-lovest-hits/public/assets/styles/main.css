@@ -4046,12 +4046,21 @@ body::-webkit-scrollbar-thumb {
   display: block;
   line-height: 100%;
 }
+
+.hide-info .plan__price span {
+  display: none;
+}
+
+.plan img {
+  cursor: pointer;
+}
+
 .plan__price span {
   font-size: 16px;
 }
 .plan__btn {
   width: 100%;
-  min-width: 140px;
+  /*min-width: 140px;*/
   height: 50px;
   border-radius: 12px;
   background-color: #222227;

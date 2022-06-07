@@ -13,7 +13,7 @@ export class AlbumsService {
   constructor(
     @InjectRepository(Album) private readonly albumRepository: Repository<Album>,
     private readonly spotifyService: SpotifyService,
-    private readonly artistsService: ArtistsService,
+    @Inject(forwardRef(() => ArtistsService)) private readonly artistsService: ArtistsService,
     @Inject(forwardRef(() => TracksService)) private readonly tracksService: TracksService,
   ) {
   }
