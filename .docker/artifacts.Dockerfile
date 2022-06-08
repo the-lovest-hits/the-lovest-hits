@@ -1,4 +1,4 @@
-FROM node:stable as artifacts
+FROM node:14 as artifacts
 WORKDIR /app
 
 COPY . .
