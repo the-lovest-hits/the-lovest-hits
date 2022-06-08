@@ -17,6 +17,7 @@ import { Player } from '../components/Player';
 import { Main } from '../components/Main';
 import { Footer } from '../components/Footer';
 import { Layout } from '../components/Layout';
+import { AccountProvider } from '../providers/account';
 
 const LovelyHitsApp = ({ Component, pageProps }: AppProps) => {
   return (
@@ -26,16 +27,18 @@ const LovelyHitsApp = ({ Component, pageProps }: AppProps) => {
           name="viewport"
           content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
-        <title>The lovest hits - index page</title>
+        <title>The Lovest Hits</title>
       </Head>
 
-      <Header />
-      <Sidebar />
-      <Player />
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
-      <Footer />
+      <AccountProvider>
+        <Header />
+        <Sidebar />
+        <Player />
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+        <Footer />
+      </AccountProvider>
     </>
   );
 };
