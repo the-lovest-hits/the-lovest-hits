@@ -1,4 +1,4 @@
-FROM node:lts as artifacts
+FROM node:16.13.2 as artifacts
 WORKDIR /app
 
 COPY . .
