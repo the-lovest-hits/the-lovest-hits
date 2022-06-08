@@ -3,6 +3,7 @@ import { useState } from "react";
 import { CubeEntity } from "../../add";
 import Input from "../../../../components/page-elements/input";
 import Button from "../../../../components/page-elements/button";
+import InputPassword from "../../../../components/page-elements/input-password";
 
 export enum MnemonicFormFields {
   Phrase = "phrase",
@@ -48,8 +49,8 @@ function MnemonicPhraseAdd({className, active, children, setActiveCube, title}) 
           {!active ? children : (
             <>
               <div className="inputs-block">
-                <Input className="input" useFormData={mnemonicPhraseUseFormData} disabled={nextStepButtonsVisible}/>
-                <Input className="input" useFormData={mnemonicPasswordUseFormData} disabled={nextStepButtonsVisible} />
+                <Input className="input" useFormData={mnemonicPhraseUseFormData} disabled={nextStepButtonsVisible} placeholder={'Phrase'}/>
+                <InputPassword useFormData={mnemonicPasswordUseFormData} disabled={nextStepButtonsVisible} placeholder={'Password'} />
               </div>
               <div className="buttons-block">
                 <Button type="submit" className="btn btn--success" disabled={!isValid || nextStepButtonsVisible}>Generate</Button>
