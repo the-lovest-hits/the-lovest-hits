@@ -7,10 +7,11 @@ import { HttpModuleOptions } from '@nestjs/axios/dist/interfaces';
 import { ApiOptions } from '@polkadot/api/types';
 import { Method } from 'axios';
 import { catchError, Observable, Subscriber, TeardownLogic, throwError } from 'rxjs';
-import { map, pluck, switchMap } from 'rxjs/operators';
+import { pluck, switchMap } from 'rxjs/operators';
 import { SubmittableExtrinsic } from '@polkadot/api/promise/types';
 import { Keyring } from '@polkadot/keyring';
 import { KeyringPair } from '@polkadot/keyring/types';
+import { SubmitTxArguments, UnsignedTxPayload } from '@unique-nft/sdk/types';
 
 type GatekeeperProviderFactory<T> = (configService: ConfigService<Config>) => T;
 
@@ -84,69 +85,64 @@ export class Gatekeeper extends ApiPromise {
         return throwError(err);
       }),
       pluck('data'),
-      map((unsignedExtrinsic) => {
-        const { signerPayloadJSON } = unsignedExtrinsic;
-        const { method, version, address } = signerPayloadJSON;
-
-        const extrinsic = this.registry.createType('Extrinsic', {
-          method,
-          version,
-        });
-
-        const submittable = this.tx(extrinsic);
-
-        submittable.sign(this.keyPair, signerPayloadJSON);
-
-        return submittable;
-      }),
-      switchMap((extrinsic: SubmittableExtrinsic) => {
-        return new Observable<SubmittableResult>((subscriber: Subscriber<SubmittableResult>): TeardownLogic => {
-          const unsub = extrinsic.send((result: SubmittableResult) => {
-            const { events, status } = result;
-            if (status.isReady || status.isBroadcast) {
-              subscriber.next(result);
-            } else if (status.isInBlock || status.isFinalized) {
-              const errors = events.filter(e => e.event.data.method === 'ExtrinsicFailed');
-              if (errors.length > 0) {
-                subscriber.error(result);
-              }
-              if (events.filter(e => e.event.data.method === 'ExtrinsicSuccess').length > 0) {
-                subscriber.next(result);
-                subscriber.complete();
-              }
-            } else {
-              subscriber.error(result);
-            }
-          });
-          return () => unsub.then();
-        });
-      }),
+      switchMap((tx) => this.signAndSubmitExtrinsic(tx)),
     );
   }
 
-  public createExtrinsic(args: {
-    signerPayloadJSON: any;
-    signature: string;
-    signatureType: string;
-  }): SubmittableExtrinsic {
-    const { signerPayloadJSON, signature, signatureType } = args;
+  public submitExternalExtrinsic(signedExtrinsic: SubmitTxArguments): Observable<SubmittableResult> {
+    return this.submitExtrinsic(
+      this.createSubmittableExtrinsic(signedExtrinsic),
+    );
+  }
+
+  public submitExtrinsic(submittable: SubmittableExtrinsic): Observable<SubmittableResult> {
+    return new Observable<SubmittableResult>((subscriber: Subscriber<SubmittableResult>): TeardownLogic => {
+      const unsub = submittable.send((result: SubmittableResult) => {
+        const { events, status } = result;
+        if (status.isReady || status.isBroadcast) {
+          subscriber.next(result);
+        } else if (status.isInBlock || status.isFinalized) {
+          const errors = events.filter(e => e.event.data.method === 'ExtrinsicFailed');
+          if (errors.length > 0) {
+            subscriber.error(result);
+          }
+          if (events.filter(e => e.event.data.method === 'ExtrinsicSuccess').length > 0) {
+            subscriber.next(result);
+            subscriber.complete();
+          }
+        } else {
+          subscriber.error(result);
+        }
+      });
+      return () => unsub.then();
+    });
+  }
+
+  public createSubmittableExtrinsic(signedExtrinsic: Partial<SubmitTxArguments>): SubmittableExtrinsic {
+
+    const { signerPayloadJSON, signature } = signedExtrinsic;
     const { method, version, address } = signerPayloadJSON;
 
-    // todo 'ExtrinsicSignature' -> enum ExtrinsicTypes {} ?
-    const signatureWithType = this.registry
-                                  .createType('ExtrinsicSignature', { [signatureType]: signature })
-                                  .toHex();
-
-    // verifyTxSignatureOrThrow(this.sdk.api, signerPayloadJSON, signature);
-
-    // todo 'Extrinsic' -> enum ExtrinsicTypes {} ? SubmittableExtrinsic
     const extrinsic = this.registry.createType('Extrinsic', {
       method,
       version,
     });
 
-    extrinsic.addSignature(address, signatureWithType, signerPayloadJSON);
+    const submittable = this.tx(extrinsic);
 
-    return this.tx(extrinsic);
+    if (signature) {
+      submittable.addSignature(address, signature, signerPayloadJSON);
+    }
+
+    return submittable;
   }
+
+  public signAndSubmitExtrinsic(unsignedExtrinsic: UnsignedTxPayload): Observable<SubmittableResult> {
+    const submittable = this.createSubmittableExtrinsic(unsignedExtrinsic);
+    // @ts-ignore
+    submittable.sign(this.keyPair, unsignedExtrinsic.signerPayloadJSON);
+
+    return this.submitExtrinsic(submittable);
+  }
+
 }

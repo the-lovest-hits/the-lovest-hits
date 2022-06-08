@@ -2,6 +2,7 @@ import { Article, Breadcrumbs, Title, useBreadcrumbs } from '../../../components
 import Link from 'next/link';
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react';
+import { useAccount } from '../../../providers/account';
 
 const Artist = () => {
   const router = useRouter();
@@ -11,6 +12,7 @@ const Artist = () => {
   const [ collection, setCollection ] = useState(null);
   const [ price, setPrice ] = useState({ commission: 20, price: 0 });
   const { setBreadcrumbs } = useBreadcrumbs();
+  const { account } = useAccount();
 
   useEffect(() => {
     if (id) {

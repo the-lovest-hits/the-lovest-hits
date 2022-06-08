@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { Config } from '../config/config.module';
 import { EventsService } from '../events/events.service';
 import { EventType } from '../../entities/event';
+import { SubmitTxArguments } from '@unique-nft/sdk/types';
 
 
 @Controller('artists')
@@ -57,7 +58,7 @@ export class ArtistsController {
   @Post(':id/mint')
   async mintPayment(
     @Param('id') id: Artist['id'],
-    @Body('extrinsic') extrinsic: any,
+    @Body('extrinsic') extrinsic: SubmitTxArguments,
     @Body('fields') artistFields: {
       tokenPrefix: string;
       description: string;
@@ -65,6 +66,8 @@ export class ArtistsController {
     },
     @Res() res: Response,
   ): Promise<any> {
+
+    console.log('extrinsic', extrinsic);
 
     const { address } = extrinsic.signerPayloadJSON
 
@@ -75,8 +78,12 @@ export class ArtistsController {
       artist: id,
     }).then();
 
-    // todo mine payment extrinsic
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    try {
+      await this.blockchainService.kusamaGatekeeper.submitExternalExtrinsic(extrinsic).toPromise();
+    } catch (e) {
+      // todo fail event
+      console.error(e);
+    }
 
     this.eventsService.createAndSave({
       type: EventType.PurchaseApproved,

@@ -13,7 +13,7 @@ export const BreadcrumbsContext = createContext<{ breadcrumbs: Breadcrumb[], set
 export const useBreadcrumbs = () => useContext(BreadcrumbsContext);
 
 export const BreadcrumbsProvider = ({ children }) => {
-  const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
+  const [ breadcrumbs, setBreadcrumbs ] = useState<Breadcrumb[]>([]);
 
   return (
     <BreadcrumbsContext.Provider value={{ breadcrumbs, setBreadcrumbs }}>

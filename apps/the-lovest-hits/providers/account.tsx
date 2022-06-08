@@ -1,15 +1,14 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-
-
+import { SignerPayloadJSON } from '@polkadot/types/types';
 
 interface Account {
   name: string;
   address: string;
-  signer: any;
+  sign: (payload: SignerPayloadJSON) => Promise<{ signature: string, type: string }>;
 }
 
 interface AccountContext {
-  active: Account | null;
+  account: Account | null;
   accounts: Account[];
   setAccounts: (accounts: Account[]) => void;
   setActive: (account: Account) => void;
@@ -18,7 +17,7 @@ interface AccountContext {
 }
 
 export const AccountContext = createContext<AccountContext>({
-  active: null,
+  account: null,
   accounts: [],
   setAccounts: () => {},
   setActive: () => {},
@@ -27,26 +26,37 @@ export const AccountContext = createContext<AccountContext>({
 });
 export const useAccount = () => useContext(AccountContext);
 
-const POLKADOT_ENABLED_KEY = 'polkadot-enabled'
+const POLKADOT_ENABLED_KEY = 'polkadot-enabled';
 
 export const AccountProvider = ({ children }) => {
   const [ accounts, setAccounts ] = useState<Account[]>([]);
-  const [ active, setActive ] = useState<Account>(null);
+  const [ account, setActive ] = useState<Account>(null);
 
   async function enablePolkadotApp() {
     localStorage.setItem(POLKADOT_ENABLED_KEY, 'true');
     const { web3Enable, web3Accounts, web3FromAddress } = await import('@polkadot/extension-dapp');
     await web3Enable('The Lovest Hits');
     const allAccounts = await web3Accounts();
-    allAccounts.forEach(({ address, meta }) => {
+    allAccounts.forEach(({ address, meta, type }) => {
       (async () => {
         const injector = await web3FromAddress(address);
-        addAccount({ address, name: meta.name, signer: injector.signer });
+        addAccount({
+          address,
+          name: meta.name,
+          sign: async (payload: SignerPayloadJSON) => {
+            const { signature } = await injector.signer.signPayload(payload);
+            return {
+              type,
+              signature,
+            }
+          },
+        });
       })();
     });
   }
 
   function addAccount(account: Account) {
+    console.log('account', account);
     // todo normalize address
     setAccounts([
       ... accounts,
@@ -55,10 +65,10 @@ export const AccountProvider = ({ children }) => {
   }
 
   useEffect(() => {
-    if (accounts.length && !active) {
+    if (accounts.length && !account) {
       setActive(accounts[0]);
     }
-  }, [ accounts, active ]);
+  }, [ accounts, account ]);
 
   useEffect(()  => {
     if (localStorage.getItem(POLKADOT_ENABLED_KEY)) {
@@ -68,7 +78,7 @@ export const AccountProvider = ({ children }) => {
 
   return (
     <AccountContext.Provider
-      value={{ active, accounts, setAccounts, setActive, enablePolkadotApp, addAccount }}
+      value={{ account, accounts, setAccounts, setActive, enablePolkadotApp, addAccount }}
     >
       {children}
     </AccountContext.Provider>

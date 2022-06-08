@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { createRef, useEffect, useRef, useState } from 'react';
 import { Article, Breadcrumbs, Title, useBreadcrumbs } from '../../../components/page-elements';
+import { useAccount } from '../../../providers/account';
 
 const CreateArtist = () => {
   const router = useRouter();
@@ -12,6 +13,7 @@ const CreateArtist = () => {
   const [ price, setPrice ] = useState({ commission: 20, price: 0 });
   const formRef = useRef<HTMLFormElement>();
   const { setBreadcrumbs } = useBreadcrumbs();
+  const { account } = useAccount();
 
   useEffect(() => {
     if (id) {
@@ -20,6 +22,12 @@ const CreateArtist = () => {
       ).then(setArtist);
     }
   }, [ id ]);
+
+  useEffect(() => {
+    if (!account) {
+      router.push('/accounts/add');
+    }
+  }, [ account ]);
 
   useEffect(() => {
 
@@ -52,11 +60,12 @@ const CreateArtist = () => {
     });
 
     // todo account address
-    const extrinsic = await fetch(`/api/artists/${artist.id}/mint?address=DGT1sQcfGG1JapVRN4v3MHVmkqCHgijHrHxvo3M1U7ZGo6s`)
+    const extrinsic = await fetch(`/api/artists/${artist.id}/mint?address=${account.address}`)
       .then(res => res.json());
 
-    // todo sign extrinsic
-    confirm('sign?');
+    const signature = await account.sign(extrinsic.signerPayloadJSON);
+
+    console.log('extrinsic', extrinsic);
 
     const response = await fetch(`/api/artists/${artist.id}/mint`,{
       method: 'POST',
@@ -65,8 +74,11 @@ const CreateArtist = () => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        extrinsic,
         fields,
+        extrinsic: {
+          ... extrinsic,
+          ... signature,
+        },
       }),
     }).then((res) => res.json());
     console.log('res', response);

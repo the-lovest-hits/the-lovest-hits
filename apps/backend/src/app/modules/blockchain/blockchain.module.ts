@@ -4,6 +4,8 @@ import { UniqueGatekeeperModule } from './gatekeeper/unique.gatekeeper';
 import { KusamaGatekeeperModule } from './gatekeeper/kusama.gatekeeper';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Genre } from '../../entities/genre';
+import { uniqueSdkProvider } from '../../unique-sdk-provider';
+import { kusamaSdkProvider } from '../../kusama-sdk-provider';
 
 @Global()
 @Module({
@@ -16,6 +18,8 @@ import { Genre } from '../../entities/genre';
   ],
   providers: [
     BlockchainService,
+    uniqueSdkProvider,
+    kusamaSdkProvider,
   ],
   exports: [
     BlockchainService,

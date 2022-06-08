@@ -14,6 +14,9 @@ import { Artist } from '../../entities/artist';
 import { Observable } from 'rxjs';
 import { SubmittableResult } from '@polkadot/api';
 import { Track } from '../../entities/track';
+import { UniqueSdk } from '../../unique-sdk-provider';
+import { KusamaSdk } from '../../kusama-sdk-provider';
+import { SubmitTxArguments, UnsignedTxPayload } from '@unique-nft/sdk/types';
 
 class ArtistCollectionSchema {
   mode = 'Nft';
@@ -91,26 +94,23 @@ export class BlockchainService {
   constructor(
     private readonly configService: ConfigService<Config>,
     public readonly uniqueGatekeeper: UniqueGatekeeper,
-    private readonly kusamaGatekeeper: KusamaGatekeeper,
+    public readonly kusamaGatekeeper: KusamaGatekeeper,
     @InjectRepository(Genre) private readonly genreRepository: Repository<Genre>,
+    public readonly uniqueSdk: UniqueSdk,
+    public readonly kusamaSdk: KusamaSdk,
   ) {
   }
 
   async createInitialPurchaseExtrinsic(
     id: string,
     address: string,
-    price: number,
-  ): Promise<any> {
-    return this.kusamaGatekeeper.gate.post(
-      'balance/transfer',
-      {
-        address,
-        amount: price,
-        destination: this.kusamaGatekeeper.keyPair.address,
-      },
-    ).pipe(
-      pluck('data'),
-    );
+    amount: number,
+  ): Promise<UnsignedTxPayload> {
+    return this.kusamaSdk.balance.transfer({
+      address,
+      destination: this.kusamaGatekeeper.keyPair.address, // todo ksm
+      amount,
+    });
   }
 
   async createRootCollection(): Promise<number> {
