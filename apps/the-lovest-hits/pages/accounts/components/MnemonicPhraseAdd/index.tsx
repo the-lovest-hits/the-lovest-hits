@@ -41,31 +41,32 @@ function MnemonicPhraseAdd({className, active, children, setActiveCube, title}) 
     <div className={className} onClick={() => setActiveCube(CubeEntity.MnemonicPhraseAdd)}>
       <div className="plan plan--green">
         <form onSubmit={handleSubmit(toFormSubmit)}>
-
           <h3 className="plan__title">{ title }</h3>
-
           <span className="plan__price"><span>Add existing or generate</span></span>
 
-          {!active ? children : (
-            <>
-              <div className="inputs-block">
-                <Input className="input" useFormData={mnemonicPhraseUseFormData} disabled={nextStepButtonsVisible} placeholder={'Phrase'}/>
-                <InputPassword useFormData={mnemonicPasswordUseFormData} disabled={nextStepButtonsVisible} placeholder={'Password'} />
-              </div>
-              <div className="buttons-block">
-                <Button type="submit" className="btn btn--success" disabled={!isValid || nextStepButtonsVisible}>Generate</Button>
-                { nextStepButtonsVisible
-                  ? <>
-                    <Button className="btn btn--success" onClick={(e) => toDownloadKeyJson(e)}>
-                      Download KeyJson File
-                    </Button>
-                    <Button className="btn btn--success" onClick={toNext}>Next</Button>
-                  </>
-                  : null
-                }
-              </div>
-            </>
-          )}
+          {
+            !active ? children : (
+              <>
+                <div className="inputs-block">
+                  <Input className="input" useFormData={mnemonicPhraseUseFormData} disabled={nextStepButtonsVisible} placeholder={'Phrase'}/>
+                  <InputPassword useFormData={mnemonicPasswordUseFormData} disabled={nextStepButtonsVisible} placeholder={'Password'} />
+                </div>
+
+                <div className="buttons-block">
+                  <Button type="submit" className="btn btn--success" disabled={!isValid || nextStepButtonsVisible}>Generate</Button>
+                  { nextStepButtonsVisible
+                    ? <>
+                        <Button className="btn btn--success" onClick={(e) => toDownloadKeyJson(e)}>
+                          Download KeyJson File
+                        </Button>
+                        <Button className="btn btn--success" onClick={toNext}>Next</Button>
+                      </>
+                    : null
+                  }
+                </div>
+              </>
+            )
+          }
 
         </form>
       </div>
