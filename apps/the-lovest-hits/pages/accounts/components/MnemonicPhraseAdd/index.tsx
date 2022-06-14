@@ -9,6 +9,7 @@ import Button from "../../../../components/page-elements/button";
 import InputPassword from "../../../../components/page-elements/input-password";
 import { useMnemonicData } from "../../../../providers/mnemonic-data";
 import { downloadKeyFile } from "../../../../shared/services/generate-mnemonic.service";
+import { useLocalStorage } from "../../../../shared/services/account-data-localstorage.service";
 
 export enum MnemonicFormFields {
   Phrase = "phrase",
@@ -22,6 +23,7 @@ function MnemonicPhraseAdd({className, active, children, setActiveCube, title}) 
   const mnemonicData = useMnemonicData();
   const mnemonicPhraseUseFormData = {...register(MnemonicFormFields.Phrase, {value: mnemonicData.mnemonic, required: true})};
   const mnemonicPasswordUseFormData = {...register(MnemonicFormFields.Password, {value: null, required: true})};
+  const [accountStorageData, setAccountStorageData] = useLocalStorage('accountStorageData', '');
 
   const toFormSubmit = (data, e) => {
     e.preventDefault();
@@ -43,6 +45,7 @@ function MnemonicPhraseAdd({className, active, children, setActiveCube, title}) 
     // // setActiveCube(CubeEntity.UploadKeyFile)
 
     downloadKeyFile(mnemonicData.json, 'keyFile');
+    setAccountStorageData(mnemonicData)
   };
 
   useEffect(() => {
