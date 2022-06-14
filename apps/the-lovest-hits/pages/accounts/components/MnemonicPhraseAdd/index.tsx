@@ -1,9 +1,14 @@
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import {
+  useEffect,
+  useState
+} from "react";
 import { CubeEntity } from "../../add";
 import Input from "../../../../components/page-elements/input";
 import Button from "../../../../components/page-elements/button";
 import InputPassword from "../../../../components/page-elements/input-password";
+import { useMnemonicData } from "../../../../providers/mnemonic-data";
+import { downloadKeyFile } from "../../../../shared/services/generate-mnemonic.service";
 
 export enum MnemonicFormFields {
   Phrase = "phrase",
@@ -14,28 +19,35 @@ function MnemonicPhraseAdd({className, active, children, setActiveCube, title}) 
   const [nextStepButtonsVisible, setNextStepButtonsVisible] = useState(false);
   const {register, setValue, handleSubmit, formState: { isValid }} = useForm({mode: 'onChange'});
 
-  const mnemonicPhraseUseFormData = {...register(MnemonicFormFields.Phrase, {required: true})};
-  const mnemonicPasswordUseFormData = {...register(MnemonicFormFields.Password, {required: true})};
+  const mnemonicData = useMnemonicData();
+  const mnemonicPhraseUseFormData = {...register(MnemonicFormFields.Phrase, {value: mnemonicData.mnemonic, required: true})};
+  const mnemonicPasswordUseFormData = {...register(MnemonicFormFields.Password, {value: null, required: true})};
 
   const toFormSubmit = (data, e) => {
-    setNextStepButtonsVisible(true);
-
     e.preventDefault();
+
+    setNextStepButtonsVisible(true);
   }
 
   const toNext = () => {
     // setActiveCube(CubeEntity.MnemonicPhraseAdd)
+    mnemonicData.generateMnemonic();
 
-    setValue(MnemonicFormFields.Phrase, null, { shouldValidate: true });
-    setValue(MnemonicFormFields.Password, null, { shouldValidate: true });
+    setValue(MnemonicFormFields.Password, null,{ shouldValidate: true });
 
     setNextStepButtonsVisible(false);
   };
 
   const toDownloadKeyJson = e => {
-    // setActiveCube(CubeEntity.UploadKeyFile)
-    e.stopPropagation();
+    e.preventDefault();
+    // // setActiveCube(CubeEntity.UploadKeyFile)
+
+    downloadKeyFile(mnemonicData.json, 'keyFile');
   };
+
+  useEffect(() => {
+    setValue(MnemonicFormFields.Phrase, mnemonicData.mnemonic, { shouldValidate: true });
+  }, [mnemonicData])
 
   return (
     <div className={className} onClick={() => setActiveCube(CubeEntity.MnemonicPhraseAdd)}>

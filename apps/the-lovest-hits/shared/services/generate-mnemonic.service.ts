@@ -6,21 +6,31 @@ import {
   cryptoWaitReady,
 } from '@polkadot/util-crypto';
 
-const mnemonic = mnemonicGenerate();
-const mnemonic2 = 'grief catch uphold series shuffle silly always impact feel ready leopard gloom';
-console.log(`mnemonic: ${mnemonic}`);
-console.log(`mnemonic: ${mnemonic2}`);
+export const generateMnemonicData = () => {
+  const mnemonic = mnemonicGenerate();
+  const seedBytes = mnemonicToMiniSecret(mnemonic);
+  const seed = u8aToHex(seedBytes);
 
-const seedBytes = mnemonicToMiniSecret(mnemonic2);
-const seedString = u8aToHex(seedBytes);
-console.log(`seed: ${seedString}`);
+  return ({
+    mnemonic,
+    seedBytes,
+    seed,
+  });
+}
 
-export async function exportKeyfile() {
+export async function exportKeyfile(seedBytes: Uint8Array): Promise<string> {
   await cryptoWaitReady();
 
   const account = new Keyring({ type: 'sr25519' }).addFromSeed(seedBytes);
-  const keyfile = account.toJson();
-  console.log(`keyfile:`, keyfile);
+
+  return JSON.stringify(account.toJson());
 }
 
-// exportKeyfile();
+export function downloadKeyFile(content: BlobPart, fileName: string): void {
+  const a = document.createElement("a");
+  const file = new Blob([content], {type: 'application/json'});
+
+  a.href = URL.createObjectURL(file);
+  a.download = fileName;
+  a.click();
+}

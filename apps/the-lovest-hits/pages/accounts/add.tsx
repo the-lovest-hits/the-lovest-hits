@@ -3,6 +3,7 @@ import MnemonicPhraseAdd from "./components/MnemonicPhraseAdd";
 import UploadKeyFile from "./components/UploadKeyFile";
 import ConnectPolkadotApp from "./components/ConnectPolkadotApp";
 import { Breadcrumbs, Title, useBreadcrumbs } from '../../components/page-elements';
+import { MnemonicDataProvider } from "../../providers/mnemonic-data";
 
 export enum CubeEntity {
   MnemonicPhraseAdd = 'MnemonicPhraseAdd',
@@ -57,17 +58,19 @@ export default function AccountAdd() {
     <Title>Add Account via</Title>
 
     <div className="row row--grid">
-      <MnemonicPhraseAdd
-        className={`order-md-2 order-lg-1 ` + getClassNamesFor(CubeEntity.MnemonicPhraseAdd)}
-        active={activeCube === CubeEntity.MnemonicPhraseAdd}
-        setActiveCube={setActiveCubeHandler}
-        title="Mnemonic Phrase"
-      >
-        <button
-          onClick={() => setActiveCubeHandler(CubeEntity.MnemonicPhraseAdd)}
-          className="plan__btn" type="button"
-        >Select</button>
-      </MnemonicPhraseAdd>
+      <MnemonicDataProvider>
+        <MnemonicPhraseAdd
+          className={`order-md-2 order-lg-1 ` + getClassNamesFor(CubeEntity.MnemonicPhraseAdd)}
+          active={activeCube === CubeEntity.MnemonicPhraseAdd}
+          setActiveCube={setActiveCubeHandler}
+          title="Mnemonic Phrase"
+        >
+          <button
+            onClick={() => setActiveCubeHandler(CubeEntity.MnemonicPhraseAdd)}
+            className="plan__btn" type="button"
+          >Select</button>
+        </MnemonicPhraseAdd>
+      </MnemonicDataProvider>
 
       <UploadKeyFile
         className={`order-md-1 order-lg-2 ` + getClassNamesFor(CubeEntity.UploadKeyFile)}
