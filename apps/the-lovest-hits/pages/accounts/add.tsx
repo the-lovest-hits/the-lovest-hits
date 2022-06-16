@@ -12,7 +12,7 @@ export enum CubeEntity {
 }
 
 export default function AccountAdd() {
-  const [activeCube, setActiveCube] = useState<CubeEntity>(null);
+  const [activeCube, setActiveCube] = useState<CubeEntity>(CubeEntity.UploadKeyFile);
 
   const { setBreadcrumbs } = useBreadcrumbs();
 

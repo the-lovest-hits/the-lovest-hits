@@ -4,7 +4,10 @@ import { SignerPayloadJSON } from '@polkadot/types/types';
 interface Account {
   name: string;
   address: string;
-  sign: (payload: SignerPayloadJSON) => Promise<{ signature: string, type: string }>;
+  sign: (payload: {
+    signerPayloadJSON: SignerPayloadJSON;
+    signerPayloadHex: string;
+  }) => Promise<{ signature: string, type: string }>;
 }
 
 interface AccountContext {
@@ -43,8 +46,11 @@ export const AccountProvider = ({ children }) => {
         addAccount({
           address,
           name: meta.name,
-          sign: async (payload: SignerPayloadJSON) => {
-            const { signature } = await injector.signer.signPayload(payload);
+          sign: async (payload: {
+            signerPayloadJSON: SignerPayloadJSON;
+            signerPayloadHex: string;
+          }) => {
+            const { signature } = await injector.signer.signPayload(payload.signerPayloadJSON);
             return {
               type,
               signature,
