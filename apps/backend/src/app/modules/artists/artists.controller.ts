@@ -80,26 +80,33 @@ export class ArtistsController {
 
     try {
       await this.blockchainService.kusamaGatekeeper.submitExternalExtrinsic(extrinsic).toPromise();
+
+      this.eventsService.createAndSave({
+        type: EventType.PurchaseApproved,
+        from: address,
+        to: address,
+        artist: id,
+      }).then();
+
+      this.artistsService.create(id,
+        address,
+        {
+          collectionCover: 'QmQFUZmza4hpwLFdwfLZCRsb8u6tLgFTkJx3Fxeazm4CDJ', // todo request
+          ... artistFields,
+        }).then();
+
     } catch (e) {
-      // todo fail event
       console.error(e);
+
+      this.eventsService.createAndSave({
+        type: EventType.PurchaseFailed,
+        from: address,
+        to: address,
+        artist: id,
+      }).then();
     }
 
-    this.eventsService.createAndSave({
-      type: EventType.PurchaseApproved,
-      from: address,
-      to: address,
-      artist: id,
-    }).then();
-
-    this.artistsService.create(id,
-      address,
-      {
-      collectionCover: 'QmQFUZmza4hpwLFdwfLZCRsb8u6tLgFTkJx3Fxeazm4CDJ', // todo request
-      ... artistFields,
-    }).then();
-
-    res.status(201).send({ hello: 'chuvak' });
+    res.status(201).send({});
 
   }
 }

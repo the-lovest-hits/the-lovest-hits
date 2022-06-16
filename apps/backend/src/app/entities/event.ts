@@ -14,6 +14,7 @@ export enum EventType {
   Meta = 'meta',
   InitialPurchaseRequest = 'initial_purchase_request',
   PurchaseApproved = 'purchase_approved',
+  PurchaseFailed = 'purchase_failed',
   CollectionCreated = 'collection_created',
   ArtistTokenCreated = 'artist_token_created',
   TrackTokenCreated = 'track_token_created',
