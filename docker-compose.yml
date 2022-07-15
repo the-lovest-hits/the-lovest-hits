@@ -2,27 +2,27 @@ version: "3"
 
 services:
 
-  unique-web-gate:
-    image: uniquenetwork/web:develop
-    container_name: kusama-gate
-    restart: always
-    env_file:
-      - .env
-    environment:
-      - CHAIN_WS_URL=${UNIQUE_WSS_ENDPOINT}
-    ports:
-      - 3001:3000
-
-  kusama-web-gate:
-    image: uniquenetwork/web:develop
-    container_name: unique-gate
-    restart: always
-    env_file:
-      - .env
-    environment:
-      - CHAIN_WS_URL=${KUSAMA_WSS_ENDPOINT}
-    ports:
-      - 3002:3000
+#  unique-web-gate:
+#    image: uniquenetwork/web:develop
+#    container_name: kusama-gate
+#    restart: always
+#    env_file:
+#      - .env
+#    environment:
+#      - CHAIN_WS_URL=${UNIQUE_WSS_ENDPOINT}
+#    ports:
+#      - 3001:3000
+#
+#  kusama-web-gate:
+#    image: uniquenetwork/web:develop
+#    container_name: unique-gate
+#    restart: always
+#    env_file:
+#      - .env
+#    environment:
+#      - CHAIN_WS_URL=${KUSAMA_WSS_ENDPOINT}
+#    ports:
+#      - 3002:3000
 
   postgres:
     image: postgres:14-alpine

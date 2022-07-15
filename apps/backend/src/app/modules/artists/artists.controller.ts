@@ -15,7 +15,6 @@ export class ArtistsController {
 
   constructor(
     private readonly artistsService: ArtistsService,
-    private readonly blockchainService: BlockchainService,
     private readonly configService: ConfigService,
     private readonly eventsService: EventsService,
   ) {
@@ -48,11 +47,11 @@ export class ArtistsController {
     @Param('id') id: string,
     @Query('address') address: string,
   ): Promise<any> {
-    return this.blockchainService.createInitialPurchaseExtrinsic(
-      id,
-      address,
-      (await this.artistsService.getArtistPrice(id)).price,
-    );
+    // return this.blockchainService.createInitialPurchaseExtrinsic(
+    //   id,
+    //   address,
+    //   (await this.artistsService.getArtistPrice(id)).price,
+    // );
   }
 
   @Post(':id/mint')
@@ -69,44 +68,44 @@ export class ArtistsController {
 
     console.log('extrinsic', extrinsic);
 
-    const { address } = extrinsic.signerPayloadJSON
-
-    this.eventsService.createAndSave({
-      type: EventType.InitialPurchaseRequest,
-      from: address,
-      to: address,
-      artist: id,
-    }).then();
-
-    try {
-      await this.blockchainService.kusamaGatekeeper.submitExternalExtrinsic(extrinsic).toPromise();
-
-      this.eventsService.createAndSave({
-        type: EventType.PurchaseApproved,
-        from: address,
-        to: address,
-        artist: id,
-      }).then();
-
-      this.artistsService.create(id,
-        address,
-        {
-          collectionCover: 'QmQFUZmza4hpwLFdwfLZCRsb8u6tLgFTkJx3Fxeazm4CDJ', // todo request
-          ... artistFields,
-        }).then();
-
-    } catch (e) {
-      console.error(e);
-
-      this.eventsService.createAndSave({
-        type: EventType.PurchaseFailed,
-        from: address,
-        to: address,
-        artist: id,
-      }).then();
-    }
-
-    res.status(201).send({});
+    // const { address } = extrinsic.signerPayloadJSON
+    //
+    // this.eventsService.createAndSave({
+    //   type: EventType.InitialPurchaseRequest,
+    //   from: address,
+    //   to: address,
+    //   artist: id,
+    // }).then();
+    //
+    // try {
+    //   await this.blockchainService.kusamaGatekeeper.submitExternalExtrinsic(extrinsic).toPromise();
+    //
+    //   this.eventsService.createAndSave({
+    //     type: EventType.PurchaseApproved,
+    //     from: address,
+    //     to: address,
+    //     artist: id,
+    //   }).then();
+    //
+    //   this.artistsService.create(id,
+    //     address,
+    //     {
+    //       collectionCover: 'QmQFUZmza4hpwLFdwfLZCRsb8u6tLgFTkJx3Fxeazm4CDJ', // todo request
+    //       ... artistFields,
+    //     }).then();
+    //
+    // } catch (e) {
+    //   console.error(e);
+    //
+    //   this.eventsService.createAndSave({
+    //     type: EventType.PurchaseFailed,
+    //     from: address,
+    //     to: address,
+    //     artist: id,
+    //   }).then();
+    // }
+    //
+    // res.status(201).send({});
 
   }
 }

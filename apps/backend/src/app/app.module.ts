@@ -12,8 +12,6 @@ import { Album } from './entities/album';
 import { BlockchainModule } from './modules/blockchain/blockchain.module';
 import { Event } from './entities/event';
 import { Account } from './entities/account';
-import { uniqueSdkProvider } from './unique-sdk-provider';
-import { kusamaSdkProvider } from './kusama-sdk-provider';
 
 @Module({
   imports: [

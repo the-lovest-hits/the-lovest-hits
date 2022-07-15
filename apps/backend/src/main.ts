@@ -11,10 +11,6 @@ import { ConfigService } from '@nestjs/config';
 import { Config } from './app/modules/config/config.module';
 import { BlockchainModule } from './app/modules/blockchain/blockchain.module';
 import { BlockchainService } from './app/modules/blockchain/blockchain.service';
-import { ArtistsModule } from './app/modules/artists/artists.module';
-import { ArtistsService } from './app/modules/artists/artists.service';
-import { TracksModule } from './app/modules/tracks/tracks.module';
-import { TracksService } from './app/modules/tracks/tracks.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -26,16 +22,15 @@ async function bootstrap() {
   }
 
   // todo remove this
-  // const collectionId = config.get('unique').collectionId;
-  // const bc = app.select(BlockchainModule).get(BlockchainService);
-  // // @ts-ignore
-  // const collection = (await bc.uniqueGatekeeper.rpc.unique.collectionById(+collectionId)).toHuman();
-  // if (!collection) {
-  //   bc.createRootCollection().then((createCollectionId) => {
-  //     console.log('UNIQUE_COLLECTION_ID=', createCollectionId);
-  //   });
-  //   return;
-  // }
+  const collectionId = config.get('unique').collectionId;
+  // @ts-ignore
+  if (!collectionId) {
+    const bc = app.select(BlockchainModule).get(BlockchainService);
+    bc.createRootCollection().then((createCollectionId) => {
+      console.log('UNIQUE_COLLECTION_ID=', createCollectionId);
+    });
+    return;
+  }
 
   // todo remove this
   // const artistsService = app.select(ArtistsModule).get(ArtistsService);

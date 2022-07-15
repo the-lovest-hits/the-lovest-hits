@@ -33,60 +33,60 @@ export class ArtistsService {
       collectionCover: string;
     }
   ) {
-    const artist = await this.getById(id as string);
-
-    const collectionId = await this.blockchainService.mintArtistCollection({
-      artist,
-      ... collectionFields,
-    });
-
-    artist.collectionId = collectionId;
-    await this.artistRepository.save(artist);
-
-    this.eventsService.createAndSave({
-      artist,
-      from: address,
-      to: address,
-      type: EventType.CollectionCreated,
-      meta: {
-        collectionId,
-      },
-    }).then();
-
-    const { tokenId } = await this.blockchainService.mintArtistToken(
-      artist,
-      collectionFields.collectionCover,
-      address,
-    );
-
-    artist.tokenId = tokenId;
-    await this.artistRepository.save(artist);
-
-    this.eventsService.createAndSave({
-      artist,
-      from: address,
-      to: address,
-      type: EventType.ArtistTokenCreated,
-      meta: {
-        tokenId,
-      },
-    }).then();
-
-    await this.blockchainService.addAddressToWhiteList(
-      address,
-      collectionId,
-    );
-
-    this.eventsService.createAndSave({
-      artist,
-      from: address,
-      to: address,
-      type: EventType.AddedToWhiteList,
-      meta: {
-        address,
-        collectionId: collectionId,
-      },
-    }).then();
+    // const artist = await this.getById(id as string);
+    //
+    // const collectionId = await this.blockchainService.mintArtistCollection({
+    //   artist,
+    //   ... collectionFields,
+    // });
+    //
+    // artist.collectionId = collectionId;
+    // await this.artistRepository.save(artist);
+    //
+    // this.eventsService.createAndSave({
+    //   artist,
+    //   from: address,
+    //   to: address,
+    //   type: EventType.CollectionCreated,
+    //   meta: {
+    //     collectionId,
+    //   },
+    // }).then();
+    //
+    // const { tokenId } = await this.blockchainService.mintArtistToken(
+    //   artist,
+    //   collectionFields.collectionCover,
+    //   address,
+    // );
+    //
+    // artist.tokenId = tokenId;
+    // await this.artistRepository.save(artist);
+    //
+    // this.eventsService.createAndSave({
+    //   artist,
+    //   from: address,
+    //   to: address,
+    //   type: EventType.ArtistTokenCreated,
+    //   meta: {
+    //     tokenId,
+    //   },
+    // }).then();
+    //
+    // await this.blockchainService.addAddressToWhiteList(
+    //   address,
+    //   collectionId,
+    // );
+    //
+    // this.eventsService.createAndSave({
+    //   artist,
+    //   from: address,
+    //   to: address,
+    //   type: EventType.AddedToWhiteList,
+    //   meta: {
+    //     address,
+    //     collectionId: collectionId,
+    //   },
+    // }).then();
 
   }
 

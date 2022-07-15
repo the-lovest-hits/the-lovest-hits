@@ -86,46 +86,46 @@ export class TracksService {
       description: string; // todo add to collection
     },
   ): Promise<any> {
-    const track = await this.getById(id, true);
+    // const track = await this.getById(id, true);
 
-    const { collectionId, tokenId } = await this.blockchainService.mintTrackToken(
-      track,
-      fields.image,
-      address,
-    );
+    // const { collectionId, tokenId } = await this.blockchainService.mintTrackToken(
+    //   track,
+    //   fields.image,
+    //   address,
+    // );
 
-    track.collectionId = collectionId;
-    track.tokenId = tokenId;
-    track.ipfsPin = fields.image;
-    await this.trackRepository.save(track);
+    // track.collectionId = collectionId;
+    // track.tokenId = tokenId;
+    // track.ipfsPin = fields.image;
+    // await this.trackRepository.save(track);
 
-    this.eventsService.createAndSave({
-      track,
-      artist: track.artist,
-      from: address,
-      to: address,
-      type: EventType.TrackTokenCreated,
-      meta: {
-        collectionId,
-        tokenId,
-      },
-    }).then();
+    // this.eventsService.createAndSave({
+    //   track,
+    //   artist: track.artist,
+    //   from: address,
+    //   to: address,
+    //   type: EventType.TrackTokenCreated,
+    //   meta: {
+    //     collectionId,
+    //     tokenId,
+    //   },
+    // }).then();
 
-    await this.blockchainService.removeAddressFromWhiteList(
-      address,
-      track.artist.collectionId,
-    );
+    // await this.blockchainService.removeAddressFromWhiteList(
+    //   address,
+    //   track.artist.collectionId,
+    // );
 
-    this.eventsService.createAndSave({
-      track,
-      artist: track.artist,
-      from: address,
-      to: address,
-      type: EventType.RemovedFromWhiteList,
-      meta: {
-        address,
-        collectionId,
-      },
-    }).then();
+    // this.eventsService.createAndSave({
+    //   track,
+    //   artist: track.artist,
+    //   from: address,
+    //   to: address,
+    //   type: EventType.RemovedFromWhiteList,
+    //   meta: {
+    //     address,
+    //     collectionId,
+    //   },
+    // }).then();
   }
 }

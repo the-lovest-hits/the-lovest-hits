@@ -1,11 +1,10 @@
 import { Global, Module } from '@nestjs/common';
 import { BlockchainService } from './blockchain.service';
-import { UniqueGatekeeperModule } from './gatekeeper/unique.gatekeeper';
-import { KusamaGatekeeperModule } from './gatekeeper/kusama.gatekeeper';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Genre } from '../../entities/genre';
-import { uniqueSdkProvider } from '../../unique-sdk-provider';
-import { kusamaSdkProvider } from '../../kusama-sdk-provider';
+import { HttpModule } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
+import { Config } from '../config/config.module';
 
 @Global()
 @Module({
@@ -13,13 +12,22 @@ import { kusamaSdkProvider } from '../../kusama-sdk-provider';
     TypeOrmModule.forFeature([
       Genre,
     ]),
-    UniqueGatekeeperModule,
-    KusamaGatekeeperModule,
+    HttpModule.registerAsync({
+      useFactory: (configService: ConfigService<Config>) => {
+        return {
+          baseURL: configService.get<Config['unique']>('unique').webGate,
+          headers: {
+            Authorization: 'Seed ' + configService.get<Config['unique']>('unique').seed,
+          },
+        }
+      },
+      inject: [
+        ConfigService,
+      ]
+    }),
   ],
   providers: [
     BlockchainService,
-    uniqueSdkProvider,
-    kusamaSdkProvider,
   ],
   exports: [
     BlockchainService,
